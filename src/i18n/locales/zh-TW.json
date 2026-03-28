@@ -150,7 +150,7 @@
     "phraseHintsDesc": "每行加入一個常用詞或短句，讓 Google Speech 更容易辨識。",
     "phraseHintsPlaceholder": "例如：發票\n香港身份證\n陳大文",
     "globalHotkey": "語音輸入快捷鍵",
-    "globalHotkeyDesc": "點一下快捷鍵欄位，然後按一個按鍵或組合鍵來開始及停止語音輸入。",
+    "globalHotkeyDesc": "點一下快捷鍵欄位，然後按一個按鍵或組合鍵。按住錄音，放開停止。",
     "launchOnStartup": "開機自啟",
     "launchOnStartupDesc": "Windows 啟動時自動開啟 TypeFree 並打開主視窗。",
     "hotkeyRecording": "請按下按鍵或組合鍵...",

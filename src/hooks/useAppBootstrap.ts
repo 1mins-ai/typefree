@@ -8,11 +8,11 @@ import {
   loadHistory,
   loadSettings,
 } from "../lib/tauri";
-import type { AppSettings, HistoryEntry, SessionStatus } from "../types";
+import type { AppSettings, HistoryEntry, HotkeyStatePayload, SessionStatus } from "../types";
 
 interface UseAppBootstrapOptions {
   t: TFunction;
-  onHotkeyTriggered: () => void | Promise<void>;
+  onHotkeyTriggered: (payload: HotkeyStatePayload) => void | Promise<void>;
   onSessionStatusChange: (status: SessionStatus) => void;
 }
 
@@ -61,8 +61,8 @@ export function useAppBootstrap({
       setBootstrapped(true);
     });
 
-    listenForHotkey(() => {
-      void hotkeyHandlerRef.current();
+    listenForHotkey((payload) => {
+      void hotkeyHandlerRef.current(payload);
     })
       .then((unlisten) => {
         unlistenHotkey = unlisten;
@@ -71,7 +71,6 @@ export function useAppBootstrap({
         console.error(listenError);
         setError(tRef.current("messages.failedHotkey"));
       });
-
     listenForSessionStatus(({ status }) => {
       sessionStatusHandlerRef.current(status);
     })

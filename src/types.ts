@@ -42,7 +42,7 @@ export interface DictationResult {
 }
 
 export interface HotkeyStatePayload {
-  state: "triggered";
+  state: "pressed" | "released";
   shortcut: string;
 }
 

@@ -12,6 +12,7 @@ import type {
   AppSettings,
   DictationResult,
   HistoryEntry,
+  HotkeyStatePayload,
   SessionStatus,
 } from "../types";
 
@@ -23,6 +24,8 @@ interface UseDictationSessionOptions {
   setError: React.Dispatch<React.SetStateAction<string>>;
   clearFeedback: () => void;
 }
+
+const SHORT_PRESS_THRESHOLD_MS = 250;
 
 export function useDictationSession({
   t,
@@ -48,6 +51,7 @@ export function useDictationSession({
   const overlayHideTimerRef = useRef<number | null>(null);
   const startSoundRef = useRef<HTMLAudioElement | null>(null);
   const stopSoundRef = useRef<HTMLAudioElement | null>(null);
+  const recordingStartedAtRef = useRef<number | null>(null);
 
   useEffect(() => {
     statusRef.current = status;
@@ -131,6 +135,7 @@ export function useDictationSession({
     streamRef.current?.getTracks().forEach((track) => track.stop());
     streamRef.current = null;
     isRecordingRef.current = false;
+    recordingStartedAtRef.current = null;
     setMicLevel(0);
   }, []);
 
@@ -224,6 +229,7 @@ export function useDictationSession({
       beginAudioAnalysis(stream);
       recorder.start();
       isRecordingRef.current = true;
+      recordingStartedAtRef.current = Date.now();
       setStatus("listening");
       playCue(startSoundRef.current, "start");
 
@@ -239,12 +245,28 @@ export function useDictationSession({
       setStatus("error");
       setError(t("messages.micFailed"));
     }
-  }, [beginAudioAnalysis, clearFeedback, clearOverlayHideTimer, setError, t]);
+  }, [beginAudioAnalysis, clearFeedback, clearOverlayHideTimer, playCue, setError, t]);
 
   const blobToBase64 = useCallback(async (blob: Blob) => {
     const bytes = new Uint8Array(await blob.arrayBuffer());
     return toBase64(bytes);
   }, []);
+
+  const cancelRecording = useCallback(async () => {
+    if (!isRecordingRef.current || !mediaRecorderRef.current) {
+      return;
+    }
+
+    const recorder = mediaRecorderRef.current;
+    const stopPromise = new Promise<void>((resolve) => {
+      recorder.onstop = () => resolve();
+    });
+
+    recorder.stop();
+    cleanupMedia();
+    setStatus("idle");
+    await stopPromise;
+  }, [cleanupMedia]);
 
   const stopRecordingAndProcess = useCallback(async () => {
     if (
@@ -257,6 +279,15 @@ export function useDictationSession({
 
     const recorder = mediaRecorderRef.current;
     const mimeType = recorder.mimeType || "audio/webm";
+
+    const elapsed = recordingStartedAtRef.current === null
+      ? SHORT_PRESS_THRESHOLD_MS
+      : Date.now() - recordingStartedAtRef.current;
+
+    if (elapsed < SHORT_PRESS_THRESHOLD_MS) {
+      await cancelRecording();
+      return;
+    }
 
     const stopPromise = new Promise<Blob>((resolve) => {
       recorder.onstop = () => {
@@ -294,17 +325,20 @@ export function useDictationSession({
       setStatus("error");
       setError(processError instanceof Error ? processError.message : String(processError));
     }
-  }, [applyDictationResult, blobToBase64, cleanupMedia, getCurrentSettings, playCue, setError, setSettings]);
+  }, [applyDictationResult, blobToBase64, cancelRecording, cleanupMedia, getCurrentSettings, playCue, setError, setSettings]);
 
-  const handleHotkeyToggle = useCallback(async () => {
-    const currentStatus = statusRef.current;
+  const handleHotkeyStateChange = useCallback(async (payload: HotkeyStatePayload) => {
+    if (payload.state === "pressed") {
+      const currentStatus = statusRef.current;
 
-    if (currentStatus === "idle" || currentStatus === "done" || currentStatus === "error") {
-      await startRecording();
+      if (currentStatus === "idle" || currentStatus === "done" || currentStatus === "error") {
+        await startRecording();
+      }
+
       return;
     }
 
-    if (currentStatus === "listening") {
+    if (payload.state === "released" && statusRef.current === "listening") {
       await stopRecordingAndProcess();
     }
   }, [startRecording, stopRecordingAndProcess]);
@@ -315,6 +349,6 @@ export function useDictationSession({
     micLevel,
     transcript,
     cleanedText,
-    handleHotkeyToggle,
+    handleHotkeyStateChange,
   };
 }

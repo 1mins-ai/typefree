@@ -98,7 +98,7 @@
     "sourceLanguage": "입력 언어",
     "sourceLanguageDesc": "음성 입력에 사용할 언어.",
     "globalHotkey": "음성 입력",
-    "globalHotkeyDesc": "음성 입력을 시작하고 중지하려면 누르세요.",
+    "globalHotkeyDesc": "단축키 입력 칸을 클릭한 다음 키 또는 조합 키를 누르세요. 누르고 있는 동안 녹음하고, 손을 떼면 멈춥니다.",
     "hotkeyRecording": "키 조합을 누르세요...",
     "hotkeyClear": "\u00d7",
     "historyRetention": "기록 보관",

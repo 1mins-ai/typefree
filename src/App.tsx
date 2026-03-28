@@ -13,7 +13,7 @@ import { useAppBootstrap } from "./hooks/useAppBootstrap";
 import { useDictionaryManager } from "./hooks/useDictionaryManager";
 import { useDictationSession } from "./hooks/useDictationSession";
 import { deleteHistoryEntry, isOverlayWindow, loadHistory, loadSettings, saveSettings } from "./lib/tauri";
-import type { AppSettings, SessionStatus } from "./types";
+import type { AppSettings, HotkeyStatePayload, SessionStatus } from "./types";
 
 function AppShell() {
   const { t, i18n } = useTranslation();
@@ -27,7 +27,7 @@ function AppShell() {
   const copyTimerRef = useRef<number | null>(null);
   const openRouterKeyInputRef = useRef<HTMLInputElement | null>(null);
   const googleKeyInputRef = useRef<HTMLInputElement | null>(null);
-  const hotkeyHandlerRef = useRef<() => void | Promise<void>>(() => undefined);
+  const hotkeyHandlerRef = useRef<(payload: HotkeyStatePayload) => void | Promise<void>>((_payload) => undefined);
   const sessionStatusHandlerRef = useRef<(status: SessionStatus) => void>(() => undefined);
 
   const {
@@ -44,7 +44,7 @@ function AppShell() {
     reloadAppData,
   } = useAppBootstrap({
     t,
-    onHotkeyTriggered: () => hotkeyHandlerRef.current(),
+    onHotkeyTriggered: (payload) => hotkeyHandlerRef.current(payload),
     onSessionStatusChange: (status) => sessionStatusHandlerRef.current(status),
   });
 
@@ -83,7 +83,7 @@ function AppShell() {
     micLevel,
     transcript,
     cleanedText,
-    handleHotkeyToggle,
+    handleHotkeyStateChange,
   } = useDictationSession({
     t,
     getCurrentSettings,
@@ -94,9 +94,9 @@ function AppShell() {
   });
 
   useEffect(() => {
-    hotkeyHandlerRef.current = handleHotkeyToggle;
+    hotkeyHandlerRef.current = handleHotkeyStateChange;
     sessionStatusHandlerRef.current = setStatus;
-  }, [handleHotkeyToggle, setStatus]);
+  }, [handleHotkeyStateChange, setStatus]);
 
   useEffect(() => {
     return () => {

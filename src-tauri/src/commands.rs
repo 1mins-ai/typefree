@@ -244,14 +244,15 @@ pub fn register_or_replace_shortcut<R: Runtime>(
 
         app.global_shortcut()
             .on_shortcut(next_shortcut, move |handle, shortcut, event| {
-                if !matches!(event.state(), ShortcutState::Pressed) {
-                    return;
-                }
+                let state = match event.state() {
+                    ShortcutState::Pressed => "pressed",
+                    ShortcutState::Released => "released",
+                };
 
                 let _ = handle.emit(
                     "dictation-hotkey-state",
                     serde_json::json!({
-                        "state": "triggered",
+                        "state": state,
                         "shortcut": shortcut.to_string()
                     }),
                 );
@@ -302,7 +303,7 @@ fn emit_session_status<R: Runtime>(app: &AppHandle<R>, status: &str) {
 
 fn overlay_message(status: &str) -> String {
     match status {
-        "listening" => "Listening... press the shortcut again to stop.".to_string(),
+        "listening" => "Listening... release the shortcut to stop.".to_string(),
         "transcribing" => "Transcribing...".to_string(),
         "cleaning" => "Cleaning transcript...".to_string(),
         "inserting" => "Inserting into the active app...".to_string(),

@@ -5,7 +5,7 @@ English: TypeFree is a Windows-focused desktop dictation tool that uses Google S
 
 ## Demo / 示範影片
 
-![TypeFree demo](./docs/demo.gif)
+![TypeFree demo](./docs/demov2.gif)
 
 ## Download / 下載
 

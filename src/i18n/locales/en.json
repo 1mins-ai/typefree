@@ -22,7 +22,7 @@
   },
   "sidebar": {
     "availableAnywhere": "Available anywhere",
-    "availableAnywhereCopy": "Close this window and keep dictating from the tray with {{hotkey}}.",
+    "availableAnywhereCopy": "Close this window and hold {{hotkey}} from the tray whenever you want to dictate.",
     "footerStatus": "Status",
     "footerHistory": "History",
     "interfaceLanguage": "Interface language"
@@ -51,7 +51,7 @@
   "home": {
     "eyebrow": "Home",
     "heroTitle": "Speak naturally, write cleanly, and keep your setup close by.",
-    "heroCopy": "Press <keycap>{{hotkey}}</keycap> once to start dictation anywhere, then press it again to stop. The bottom capsule stays visible while speech is transcribed, cleaned, and inserted.",
+    "heroCopy": "Hold <keycap>{{hotkey}}</keycap> anywhere to record, then release it to stop. The bottom capsule stays visible while speech is transcribed, cleaned, and inserted.",
     "micLevel": "Mic level {{level}}%",
     "waitingCopy": "Waiting for your next dictation."
   },
@@ -150,7 +150,7 @@
     "phraseHintsDesc": "Add words or phrases you often say, one per line, so Google Speech is more likely to recognize them.",
     "phraseHintsPlaceholder": "e.g. invoice\nHong Kong ID\nChan Tai Man",
     "globalHotkey": "Dictation shortcut",
-    "globalHotkeyDesc": "Click the shortcut box, then press a single key or key combination to start and stop dictation.",
+    "globalHotkeyDesc": "Click the shortcut box, then press a single key or key combination. Hold it to record, and release it to stop.",
     "launchOnStartup": "Launch on startup",
     "launchOnStartupDesc": "Start TypeFree automatically when Windows starts and open the main window.",
     "hotkeyRecording": "Press a key or combination...",

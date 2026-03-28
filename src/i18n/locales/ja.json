@@ -98,7 +98,7 @@
     "sourceLanguage": "入力言語",
     "sourceLanguageDesc": "ディクテーションで使用する言語。",
     "globalHotkey": "ディクテーション",
-    "globalHotkeyDesc": "ディクテーションの開始・停止に使用します。",
+    "globalHotkeyDesc": "ショートカット欄をクリックして、キーまたはキーの組み合わせを押してください。押している間は録音し、離すと停止します。",
     "hotkeyRecording": "キーの組み合わせを押してください...",
     "hotkeyClear": "\u00d7",
     "historyRetention": "履歴の保持",
