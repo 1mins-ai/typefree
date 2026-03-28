@@ -1,0 +1,111 @@
+.settings-page {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding: 28px 8px;
+}
+
+.settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.settings-title {
+  font-size: 1.6rem;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.settings-sections {
+  display: grid;
+  gap: 0;
+}
+
+.settings-section-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 24px 0 12px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 4px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--accent-deep);
+}
+
+.settings-section-divider:first-child {
+  padding-top: 0;
+}
+
+.settings-section-icon {
+  font-size: 1.05rem;
+  min-width: 28px;
+  display: inline-flex;
+  justify-content: center;
+}
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.setting-row:last-child {
+  border-bottom: 0;
+}
+
+.setting-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.setting-label {
+  margin: 0;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-strong);
+}
+
+.setting-desc {
+  margin: 3px 0 0;
+  font-size: 0.84rem;
+  color: var(--text-muted);
+}
+
+.setting-control {
+  flex-shrink: 0;
+  width: 260px;
+}
+
+.setting-control select,
+.setting-control input,
+.setting-control textarea {
+  margin: 0;
+}
+
+.setting-control-toggle {
+  width: auto;
+  display: flex;
+  align-items: center;
+}
+
+.setting-control-toggle input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+}
+
+@media (max-width: 1100px) {
+  .setting-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .setting-control {
+    width: 100%;
+  }
+}
