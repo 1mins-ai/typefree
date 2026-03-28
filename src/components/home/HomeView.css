@@ -1,0 +1,141 @@
+.hero-panel {
+  border-radius: 28px;
+  padding: 28px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 20px;
+  align-items: start;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+.hero-copy {
+  color: var(--text-muted);
+}
+
+.keycap {
+  display: inline-flex;
+  padding: 2px 8px;
+  border-radius: 9px;
+  background: rgba(96, 130, 204, 0.12);
+  border: 1px solid rgba(96, 130, 204, 0.24);
+  color: var(--accent-deep);
+}
+
+.hero-status {
+  border-radius: 22px;
+  padding: 18px;
+  background: linear-gradient(135deg, #3f5f9f 0%, #6082cc 100%);
+  color: #f8fbff;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  box-shadow: 0 18px 30px rgba(96, 130, 204, 0.22);
+}
+
+.hero-status-label {
+  margin-bottom: 4px;
+  font-weight: 700;
+}
+
+.hero-status-copy {
+  margin-bottom: 0;
+  color: rgba(248, 251, 255, 0.82);
+}
+
+.status-dot {
+  width: 12px;
+  height: 12px;
+  margin-top: 6px;
+  border-radius: 999px;
+  background: #c7f0dc;
+  box-shadow: 0 0 0 5px rgba(199, 240, 220, 0.2);
+}
+
+.hero-status-error .status-dot {
+  background: #ffd4d9;
+  box-shadow: 0 0 0 5px rgba(255, 212, 217, 0.16);
+}
+
+.summary-grid,
+.details-grid,
+.feedback-grid {
+  display: grid;
+  gap: 18px;
+}
+
+.summary-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.details-grid {
+  grid-template-columns: minmax(320px, 760px) minmax(260px, 1fr);
+}
+
+.summary-stack {
+  display: grid;
+  gap: 14px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.detail-row:last-child {
+  border-bottom: 0;
+}
+
+.detail-row strong,
+.latest-cleaned,
+.feedback-block p {
+  color: var(--text-strong);
+}
+
+.latest-card {
+  border-radius: 20px;
+  padding: 18px;
+  background: linear-gradient(180deg, #fbfdff 0%, #eef4ff 100%);
+  min-height: 210px;
+}
+
+.latest-raw {
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.latest-cleaned {
+  font-size: 1.05rem;
+  margin-bottom: 18px;
+}
+
+.feedback-panel {
+  padding-top: 24px;
+}
+
+.feedback-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.feedback-block {
+  border-radius: 20px;
+  padding: 18px;
+  background: var(--surface-muted);
+}
+
+.feedback-block p {
+  margin-bottom: 0;
+}
+
+@media (max-width: 1100px) {
+  .summary-grid,
+  .details-grid,
+  .feedback-grid,
+  .hero-panel {
+    grid-template-columns: 1fr;
+  }
+}

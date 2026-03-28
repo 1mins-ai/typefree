@@ -1,0 +1,133 @@
+{
+  "brand": {
+    "title": "TypeFree",
+    "subtitle": "デスクトップ音声入力"
+  },
+  "nav": {
+    "home": "ホーム",
+    "history": "履歴",
+    "setting": "設定"
+  },
+  "status": {
+    "listening": "リスニング中",
+    "transcribing": "文字起こし中",
+    "cleaning": "整形中",
+    "inserting": "挿入中",
+    "done": "挿入済み",
+    "error": "注意が必要"
+  },
+  "overlay": {
+    "thinking": "処理中"
+  },
+  "sidebar": {
+    "availableAnywhere": "どこでも利用可能",
+    "availableAnywhereCopy": "このウィンドウを閉じて、トレイから {{hotkey}} でディクテーションを続けられます。",
+    "footerStatus": "ステータス",
+    "footerHistory": "履歴",
+    "interfaceLanguage": "表示言語"
+  },
+  "home": {
+    "eyebrow": "ホーム",
+    "heroTitle": "自然に話し、きれいに書き、設定をすぐ手元に。",
+    "heroCopy": "<keycap>{{hotkey}}</keycap> を一度押すとどこでもディクテーションを開始でき、もう一度押すと停止します。音声の文字起こし、整形、挿入の間、下部のカプセルが表示されます。",
+    "micLevel": "マイクレベル {{level}}%",
+    "waitingCopy": "次のディクテーションを待機中。"
+  },
+  "summary": {
+    "savedDictations": "保存済みディクテーション",
+    "wordsDictated": "入力済み単語数",
+    "avgWords": "平均単語数 / 回",
+    "currentProvider": "現在のプロバイダー"
+  },
+  "workspace": {
+    "eyebrow": "ワークスペース概要",
+    "title": "現在のディクテーション設定",
+    "provider": "プロバイダー",
+    "model": "モデル",
+    "sourceLanguage": "入力言語",
+    "cleanup": "テキスト整形",
+    "enabled": "有効",
+    "disabled": "無効"
+  },
+  "latest": {
+    "eyebrow": "最新の結果",
+    "hasResult": "直近のディクテーション",
+    "noResult": "ディクテーションなし",
+    "copyLatest": "最新をコピー",
+    "emptyCopy": "最初のディクテーション成功後、最新の文字起こしと整形結果がここに表示されます。"
+  },
+  "feedback": {
+    "eyebrow": "ライブセッション",
+    "title": "現在のデスクトップ状態",
+    "rawTranscript": "生の文字起こし",
+    "rawEmpty": "次の文字起こしがここに表示されます。",
+    "cleanedOutput": "整形済み出力",
+    "cleanedEmpty": "整形完了後、挿入されたテキストがここに表示されます。"
+  },
+  "historyPage": {
+    "eyebrow": "履歴",
+    "title": "ローカルディクテーション履歴",
+    "copy": "このデバイスにのみ保存されます。いつでもエントリのコピーや削除が可能です。",
+    "keepingFor": "履歴の保持期間",
+    "entriesSaved": "{{count}} 件保存済み",
+    "copyButton": "コピー",
+    "deleteButton": "削除",
+    "emptyTitle": "ディクテーション履歴なし",
+    "emptyCopy": "最初のディクテーション成功後、生の文字起こしと整形済みバージョンがここに保存されます。"
+  },
+  "settingPage": {
+    "title": "設定",
+    "saving": "保存中...",
+    "saveSettings": "設定を保存",
+    "sectionShortcuts": "キーボードショートカット",
+    "sectionLlm": "LLM テキスト整形",
+    "sectionSpeech": "音声",
+    "sectionStorage": "ストレージ",
+    "llmProvider": "LLM プロバイダー",
+    "llmProviderDesc": "挿入前に文字起こしを整形するプロバイダーを選択します。",
+    "openrouterApiKey": "OpenRouter API キー",
+    "openrouterApiKeyDesc": "クラウド整形用の OpenRouter API キー。",
+    "openrouterModel": "OpenRouter モデル",
+    "openrouterModelDesc": "OpenRouter で文字起こし整形に使用するモデル。",
+    "ollamaBaseUrl": "Ollama ベース URL",
+    "ollamaBaseUrlDesc": "ローカル Ollama インスタンスの URL。",
+    "ollamaModel": "Ollama モデル",
+    "ollamaModelDesc": "ローカル文字起こし整形に使用するモデル。",
+    "googleApiKey": "Google Speech API キー",
+    "googleApiKeyDesc": "Google Cloud Speech-to-Text の API キー。",
+    "sourceLanguage": "入力言語",
+    "sourceLanguageDesc": "ディクテーションで使用する言語。",
+    "globalHotkey": "ディクテーション",
+    "globalHotkeyDesc": "ディクテーションの開始・停止に使用します。",
+    "hotkeyRecording": "キーの組み合わせを押してください...",
+    "hotkeyClear": "\u00d7",
+    "historyRetention": "履歴の保持",
+    "historyRetentionDesc": "ディクテーション履歴をこのデバイスに保持する期間。",
+    "enableCleanup": "LLM テキスト整形",
+    "enableCleanupDesc": "テキスト挿入前に軽度な LLM 整形を適用します。"
+  },
+  "options": {
+    "lang_yue": "広東語（繁体字、香港）",
+    "lang_cmn_hans": "標準中国語（簡体字、中国）",
+    "lang_cmn_hant": "標準中国語（繁体字、台湾）",
+    "lang_en_us": "英語（アメリカ）",
+    "lang_en_gb": "英語（イギリス）",
+    "provider_openrouter": "OpenRouter",
+    "provider_ollama": "Ollama",
+    "retention_day": "過去24時間",
+    "retention_week": "過去7日間",
+    "retention_month": "過去30日間",
+    "retention_forever": "永久保持"
+  },
+  "messages": {
+    "failedLoad": "ローカルアプリデータの読み込みに失敗しました。",
+    "failedHotkey": "グローバルホットキーイベントの購読に失敗しました。",
+    "settingsSaved": "設定が保存されました。",
+    "micFailed": "マイクへのアクセスに失敗しました。デスクトップとブラウザの権限を確認してください。",
+    "copiedClipboard": "クリップボードにコピーしました。",
+    "failedCopy": "文字起こしのコピーに失敗しました。",
+    "somethingWrong": "問題が発生しました。",
+    "openrouterNotSet": "OpenRouter モデルが未設定",
+    "ollamaNotSet": "Ollama モデルが未設定"
+  }
+}

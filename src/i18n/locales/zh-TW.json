@@ -1,0 +1,169 @@
+{
+  "brand": {
+    "title": "TypeFree",
+    "subtitle": "桌面語音輸入"
+  },
+  "nav": {
+    "home": "首頁",
+    "history": "歷史",
+    "dictionary": "字典",
+    "setting": "設定"
+  },
+  "status": {
+    "listening": "正在聆聽",
+    "transcribing": "正在轉寫",
+    "cleaning": "正在整理",
+    "inserting": "正在輸入",
+    "done": "已完成輸入",
+    "error": "需要留意"
+  },
+  "overlay": {
+    "thinking": "處理中"
+  },
+  "sidebar": {
+    "availableAnywhere": "隨時可用",
+    "availableAnywhereCopy": "關閉主視窗後，仍可透過 {{hotkey}} 從系統列開始語音輸入。",
+    "footerStatus": "狀態",
+    "footerHistory": "歷史",
+    "interfaceLanguage": "介面語言"
+  },
+  "home": {
+    "eyebrow": "首頁",
+    "heroTitle": "自然開口，乾淨輸出，設定一直都喺手邊。",
+    "heroCopy": "按一次 <keycap>{{hotkey}}</keycap> 就可以喺任何地方開始語音輸入，再按一次停止。底部狀態膠囊會喺轉寫、整理同插入期間保持可見。",
+    "micLevel": "咪高峰音量 {{level}}%",
+    "waitingCopy": "等待你下一次語音輸入。"
+  },
+  "summary": {
+    "savedDictations": "已儲存輸入",
+    "wordsDictated": "已輸入字數",
+    "avgWords": "平均字數 / 每段",
+    "currentProvider": "目前供應商"
+  },
+  "workspace": {
+    "eyebrow": "工作區快照",
+    "title": "目前語音輸入設定",
+    "provider": "供應商",
+    "model": "模型",
+    "sourceLanguage": "輸入語言",
+    "speechProvider": "語音供應商",
+    "cleanup": "整理",
+    "enabled": "已啟用",
+    "disabled": "已停用"
+  },
+  "latest": {
+    "eyebrow": "最新結果",
+    "hasResult": "最近一次語音輸入",
+    "noResult": "未有語音輸入",
+    "copyLatest": "複製最新結果",
+    "emptyCopy": "完成第一次成功轉寫之後，最新 transcript 同整理後內容會顯示喺度。"
+  },
+  "feedback": {
+    "eyebrow": "即時狀態",
+    "title": "目前桌面狀態",
+    "rawTranscript": "原始轉寫",
+    "rawEmpty": "下一段 transcript 會顯示喺度。",
+    "cleanedOutput": "整理後輸出",
+    "cleanedEmpty": "完成整理之後，插入嘅文字會顯示喺度。"
+  },
+  "historyPage": {
+    "eyebrow": "歷史",
+    "title": "本機語音輸入歷史",
+    "copy": "資料只會保留喺本機。你可以隨時複製或刪除任何一筆紀錄。",
+    "keepingFor": "歷史保留時間",
+    "entriesSaved": "已儲存 {{count}} 筆",
+    "copyButton": "複製",
+    "deleteButton": "刪除",
+    "emptyTitle": "暫時未有語音輸入紀錄",
+    "emptyCopy": "完成一次成功語音輸入之後，原始同整理後版本都會保存在呢度。"
+  },
+  "dictionaryPage": {
+    "eyebrow": "字典",
+    "title": "常用詞字典",
+    "copy": "加入你經常講嘅字詞，令 Google Speech 更容易正確辨識。",
+    "wordsLabel": "常用詞",
+    "wordsDesc": "每次加入一個字詞。",
+    "wordsPlaceholder": "新增字詞",
+    "newWord": "新增詞語",
+    "searchPlaceholder": "搜尋字詞",
+    "allFilter": "全部",
+    "emptyTitle": "仲未有字典詞語",
+    "emptyCopy": "加入第一個常用詞，幫 Google Speech 更準確辨識。",
+    "emptySearchCopy": "搵唔到符合搜尋嘅字詞。",
+    "editTitle": "編輯詞語",
+    "addTitle": "新增詞語",
+    "wordInputLabel": "字詞",
+    "cancel": "取消",
+    "save": "儲存",
+    "closeModal": "關閉視窗",
+    "deleteAriaLabel": "刪除 {{word}}",
+    "editAriaLabel": "編輯 {{word}}",
+    "duplicateError": "呢個字詞已經喺字典入面。",
+    "requiredError": "請先輸入字詞。"
+  },
+  "settingPage": {
+    "title": "設定",
+    "saving": "儲存中...",
+    "saveSettings": "儲存設定",
+    "sectionShortcuts": "快捷鍵",
+    "sectionLlm": "LLM 整理",
+    "sectionSpeech": "語音",
+    "sectionStorage": "儲存",
+    "speechProvider": "語音供應商",
+    "speechProviderDesc": "選擇處理語音轉文字嘅供應商。",
+    "llmProvider": "LLM 供應商",
+    "llmProviderDesc": "選擇整理 transcript 再插入文字嘅供應商。",
+    "openrouterApiKey": "OpenRouter API 金鑰",
+    "openrouterApiKeyDesc": "用作雲端整理功能嘅 OpenRouter API 金鑰。",
+    "openrouterModel": "OpenRouter 模型",
+    "openrouterModelDesc": "經 OpenRouter 用作整理 transcript 嘅模型。",
+    "ollamaBaseUrl": "Ollama Base URL",
+    "ollamaBaseUrlDesc": "本機 Ollama instance 嘅網址。",
+    "ollamaModel": "Ollama 模型",
+    "ollamaModelDesc": "本機用作整理 transcript 嘅模型。",
+    "googleApiKey": "Google Speech API 金鑰",
+    "googleApiKeyDesc": "Google Cloud Speech-to-Text API 金鑰。",
+    "sourceLanguage": "輸入語言",
+    "sourceLanguageDesc": "你會用嚟進行語音輸入嘅語言。",
+    "phraseHints": "常用詞清單",
+    "phraseHintsDesc": "每行加入一個常用字詞，令 Google Speech 更容易辨識。",
+    "phraseHintsPlaceholder": "例如：一滴車\n身份證\n陳大文",
+    "globalHotkey": "語音輸入快捷鍵",
+    "globalHotkeyDesc": "點選快捷鍵框後，按一個按鍵或組合鍵去開始同停止語音輸入。",
+    "launchOnStartup": "開機時啟動",
+    "launchOnStartupDesc": "Windows 開機後自動啟動 TypeFree，並打開主視窗。",
+    "hotkeyRecording": "請按一個按鍵或組合鍵...",
+    "hotkeyPlaceholder": "請按一個按鍵或組合鍵...",
+    "hotkeyInvalid": "請使用非修飾鍵，例如 F8、D 或 Ctrl+Shift+D。",
+    "hotkeyClear": "×",
+    "historyRetention": "歷史保留時間",
+    "historyRetentionDesc": "語音輸入歷史會喺本機保留幾耐。",
+    "enableCleanup": "LLM 整理",
+    "enableCleanupDesc": "插入文字之前先進行輕量 LLM 整理。"
+  },
+  "options": {
+    "lang_yue": "廣東話（繁體，香港）",
+    "lang_cmn_hans": "普通話（簡體，中國）",
+    "lang_cmn_hant": "普通話（繁體，台灣）",
+    "lang_en_us": "英文（美國）",
+    "lang_en_gb": "英文（英國）",
+    "provider_openrouter": "OpenRouter",
+    "provider_ollama": "Ollama",
+    "speech_provider_google": "Google Speech-to-Text",
+    "retention_day": "最近 24 小時",
+    "retention_week": "最近 7 日",
+    "retention_month": "最近 30 日",
+    "retention_forever": "永久保留"
+  },
+  "messages": {
+    "failedLoad": "載入本機資料失敗。",
+    "failedHotkey": "訂閱全域快捷鍵事件失敗。",
+    "settingsSaved": "設定已儲存。",
+    "micFailed": "無法存取咪高峰，請檢查系統或瀏覽器權限。",
+    "copiedClipboard": "已複製到剪貼簿。",
+    "failedCopy": "複製 transcript 失敗。",
+    "somethingWrong": "發生咗問題。",
+    "openrouterNotSet": "未設定 OpenRouter 模型",
+    "ollamaNotSet": "未設定 Ollama 模型"
+  }
+}

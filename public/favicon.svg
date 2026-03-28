@@ -1,0 +1,22 @@
+<svg width="128" height="128" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="32" y="32" width="448" height="448" rx="132" fill="url(#bg)"/>
+  <path
+    d="M98 214C122 214 128 170 153 170C179 170 179 278 205 278C231 278 231 118 257 118C283 118 283 250 309 250C335 250 341 214 366 214H414"
+    stroke="url(#wave)"
+    stroke-width="22"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <path d="M224 314H326" stroke="#3D3D3D" stroke-width="24" stroke-linecap="round"/>
+  <path d="M275 228V394" stroke="#3D3D3D" stroke-width="24" stroke-linecap="round"/>
+  <defs>
+    <linearGradient id="bg" x1="78" y1="62" x2="442" y2="460" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FAFCFF"/>
+      <stop offset="1" stop-color="#EEF4FF"/>
+    </linearGradient>
+    <linearGradient id="wave" x1="98" y1="198" x2="414" y2="198" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#859FD3"/>
+      <stop offset="1" stop-color="#6082CC"/>
+    </linearGradient>
+  </defs>
+</svg>

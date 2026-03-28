@@ -1,0 +1,133 @@
+{
+  "brand": {
+    "title": "TypeFree",
+    "subtitle": "데스크톱 음성 입력"
+  },
+  "nav": {
+    "home": "홈",
+    "history": "기록",
+    "setting": "설정"
+  },
+  "status": {
+    "listening": "듣는 중",
+    "transcribing": "변환 중",
+    "cleaning": "정리 중",
+    "inserting": "삽입 중",
+    "done": "삽입됨",
+    "error": "주의 필요"
+  },
+  "overlay": {
+    "thinking": "처리 중"
+  },
+  "sidebar": {
+    "availableAnywhere": "어디서나 사용 가능",
+    "availableAnywhereCopy": "이 창을 닫고 트레이에서 {{hotkey}}로 계속 음성 입력하세요.",
+    "footerStatus": "상태",
+    "footerHistory": "기록",
+    "interfaceLanguage": "인터페이스 언어"
+  },
+  "home": {
+    "eyebrow": "홈",
+    "heroTitle": "자연스럽게 말하고, 깔끔하게 쓰고, 설정을 가까이 두세요.",
+    "heroCopy": "<keycap>{{hotkey}}</keycap>를 한 번 누르면 어디서든 음성 입력이 시작되고, 다시 누르면 중지됩니다. 음성이 변환, 정리, 삽입되는 동안 하단 캡슐이 표시됩니다.",
+    "micLevel": "마이크 레벨 {{level}}%",
+    "waitingCopy": "다음 음성 입력을 기다리는 중입니다."
+  },
+  "summary": {
+    "savedDictations": "저장된 음성 입력",
+    "wordsDictated": "입력된 단어 수",
+    "avgWords": "평균 단어 수 / 회",
+    "currentProvider": "현재 공급자"
+  },
+  "workspace": {
+    "eyebrow": "워크스페이스 스냅샷",
+    "title": "현재 음성 입력 설정",
+    "provider": "공급자",
+    "model": "모델",
+    "sourceLanguage": "입력 언어",
+    "cleanup": "텍스트 정리",
+    "enabled": "활성화됨",
+    "disabled": "비활성화됨"
+  },
+  "latest": {
+    "eyebrow": "최신 결과",
+    "hasResult": "가장 최근 음성 입력",
+    "noResult": "아직 음성 입력 없음",
+    "copyLatest": "최신 복사",
+    "emptyCopy": "첫 번째 음성 입력이 성공하면 마지막 변환 및 정리 결과가 여기에 표시됩니다."
+  },
+  "feedback": {
+    "eyebrow": "실시간 세션",
+    "title": "현재 데스크톱 상태",
+    "rawTranscript": "원본 변환",
+    "rawEmpty": "다음 변환 내용이 여기에 표시됩니다.",
+    "cleanedOutput": "정리된 출력",
+    "cleanedEmpty": "정리가 완료되면 삽입된 텍스트가 여기에 표시됩니다."
+  },
+  "historyPage": {
+    "eyebrow": "기록",
+    "title": "로컬 음성 입력 기록",
+    "copy": "이 기기에만 저장됩니다. 언제든지 항목을 복사하거나 삭제할 수 있습니다.",
+    "keepingFor": "기록 보관 기간",
+    "entriesSaved": "{{count}}개 항목 저장됨",
+    "copyButton": "복사",
+    "deleteButton": "삭제",
+    "emptyTitle": "아직 음성 입력 기록 없음",
+    "emptyCopy": "첫 번째 음성 입력이 성공하면 원본 및 정리된 버전이 여기에 저장됩니다."
+  },
+  "settingPage": {
+    "title": "설정",
+    "saving": "저장 중...",
+    "saveSettings": "설정 저장",
+    "sectionShortcuts": "키보드 단축키",
+    "sectionLlm": "LLM 텍스트 정리",
+    "sectionSpeech": "음성",
+    "sectionStorage": "저장소",
+    "llmProvider": "LLM 공급자",
+    "llmProviderDesc": "삽입 전에 변환 텍스트를 정리할 공급자를 선택합니다.",
+    "openrouterApiKey": "OpenRouter API 키",
+    "openrouterApiKeyDesc": "클라우드 정리를 위한 OpenRouter API 키.",
+    "openrouterModel": "OpenRouter 모델",
+    "openrouterModelDesc": "OpenRouter를 통한 변환 텍스트 정리에 사용할 모델.",
+    "ollamaBaseUrl": "Ollama 기본 URL",
+    "ollamaBaseUrlDesc": "로컬 Ollama 인스턴스의 URL.",
+    "ollamaModel": "Ollama 모델",
+    "ollamaModelDesc": "로컬 변환 텍스트 정리에 사용할 모델.",
+    "googleApiKey": "Google Speech API 키",
+    "googleApiKeyDesc": "Google Cloud Speech-to-Text API 키.",
+    "sourceLanguage": "입력 언어",
+    "sourceLanguageDesc": "음성 입력에 사용할 언어.",
+    "globalHotkey": "음성 입력",
+    "globalHotkeyDesc": "음성 입력을 시작하고 중지하려면 누르세요.",
+    "hotkeyRecording": "키 조합을 누르세요...",
+    "hotkeyClear": "\u00d7",
+    "historyRetention": "기록 보관",
+    "historyRetentionDesc": "음성 입력 기록이 이 기기에 보관되는 기간.",
+    "enableCleanup": "LLM 텍스트 정리",
+    "enableCleanupDesc": "텍스트 삽입 전에 경량 LLM 정리를 적용합니다."
+  },
+  "options": {
+    "lang_yue": "광둥어 (번체, 홍콩)",
+    "lang_cmn_hans": "표준 중국어 (간체, 중국)",
+    "lang_cmn_hant": "표준 중국어 (번체, 대만)",
+    "lang_en_us": "영어 (미국)",
+    "lang_en_gb": "영어 (영국)",
+    "provider_openrouter": "OpenRouter",
+    "provider_ollama": "Ollama",
+    "retention_day": "최근 24시간",
+    "retention_week": "최근 7일",
+    "retention_month": "최근 30일",
+    "retention_forever": "영구 보관"
+  },
+  "messages": {
+    "failedLoad": "로컬 앱 데이터를 불러오지 못했습니다.",
+    "failedHotkey": "글로벌 단축키 이벤트 구독에 실패했습니다.",
+    "settingsSaved": "설정이 저장되었습니다.",
+    "micFailed": "마이크 접근에 실패했습니다. 데스크톱 및 브라우저 권한을 확인하세요.",
+    "copiedClipboard": "클립보드에 복사되었습니다.",
+    "failedCopy": "변환 텍스트 복사에 실패했습니다.",
+    "somethingWrong": "문제가 발생했습니다.",
+    "openrouterNotSet": "OpenRouter 모델이 설정되지 않음",
+    "ollamaNotSet": "Ollama 모델이 설정되지 않음"
+  }
+}

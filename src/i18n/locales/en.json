@@ -1,0 +1,169 @@
+{
+  "brand": {
+    "title": "TypeFree",
+    "subtitle": "Desktop dictation"
+  },
+  "nav": {
+    "home": "Home",
+    "history": "History",
+    "dictionary": "Dictionary",
+    "setting": "Setting"
+  },
+  "status": {
+    "listening": "Listening",
+    "transcribing": "Transcribing",
+    "cleaning": "Cleaning",
+    "inserting": "Inserting",
+    "done": "Inserted",
+    "error": "Attention needed"
+  },
+  "overlay": {
+    "thinking": "thinking"
+  },
+  "sidebar": {
+    "availableAnywhere": "Available anywhere",
+    "availableAnywhereCopy": "Close this window and keep dictating from the tray with {{hotkey}}.",
+    "footerStatus": "Status",
+    "footerHistory": "History",
+    "interfaceLanguage": "Interface language"
+  },
+  "home": {
+    "eyebrow": "Home",
+    "heroTitle": "Speak naturally, write cleanly, and keep your setup close by.",
+    "heroCopy": "Press <keycap>{{hotkey}}</keycap> once to start dictation anywhere, then press it again to stop. The bottom capsule stays visible while speech is transcribed, cleaned, and inserted.",
+    "micLevel": "Mic level {{level}}%",
+    "waitingCopy": "Waiting for your next dictation."
+  },
+  "summary": {
+    "savedDictations": "Saved dictations",
+    "wordsDictated": "Words dictated",
+    "avgWords": "Avg words / clip",
+    "currentProvider": "Current provider"
+  },
+  "workspace": {
+    "eyebrow": "Workspace snapshot",
+    "title": "Current dictation setup",
+    "provider": "Provider",
+    "model": "Model",
+    "sourceLanguage": "Source language",
+    "speechProvider": "Speech provider",
+    "cleanup": "Cleanup",
+    "enabled": "Enabled",
+    "disabled": "Disabled"
+  },
+  "latest": {
+    "eyebrow": "Latest result",
+    "hasResult": "Most recent dictation",
+    "noResult": "No dictation yet",
+    "copyLatest": "Copy latest",
+    "emptyCopy": "Your last transcript and cleaned result will show up here after the first successful dictation."
+  },
+  "feedback": {
+    "eyebrow": "Live session",
+    "title": "Current desktop state",
+    "rawTranscript": "Raw transcript",
+    "rawEmpty": "Your next transcript will appear here.",
+    "cleanedOutput": "Cleaned output",
+    "cleanedEmpty": "The inserted text will appear here after cleanup completes."
+  },
+  "historyPage": {
+    "eyebrow": "History",
+    "title": "Local dictation history",
+    "copy": "Saved only on this device. Copy or delete any entry whenever you like.",
+    "keepingFor": "Keeping history for",
+    "entriesSaved": "{{count}} entries saved",
+    "copyButton": "Copy",
+    "deleteButton": "Delete",
+    "emptyTitle": "No dictation history yet",
+    "emptyCopy": "Finish one successful dictation and it will be stored here with the raw and cleaned versions."
+  },
+  "dictionaryPage": {
+    "eyebrow": "Dictionary",
+    "title": "Dictionary",
+    "copy": "Add the words and phrases you say often so Google Speech is more likely to recognize them correctly.",
+    "wordsLabel": "Common words",
+    "wordsDesc": "Add one word or phrase at a time.",
+    "wordsPlaceholder": "Add a word or phrase",
+    "newWord": "New word",
+    "searchPlaceholder": "Search words",
+    "allFilter": "All",
+    "emptyTitle": "No dictionary words yet",
+    "emptyCopy": "Add your first common word to help Google Speech recognize it more accurately.",
+    "emptySearchCopy": "No words match your search.",
+    "editTitle": "Edit word",
+    "addTitle": "Add word",
+    "wordInputLabel": "Word or phrase",
+    "cancel": "Cancel",
+    "save": "Save",
+    "closeModal": "Close dialog",
+    "deleteAriaLabel": "Delete {{word}}",
+    "editAriaLabel": "Edit {{word}}",
+    "duplicateError": "This word is already in your dictionary.",
+    "requiredError": "Enter a word or phrase first."
+  },
+  "settingPage": {
+    "title": "Settings",
+    "saving": "Saving...",
+    "saveSettings": "Save settings",
+    "sectionShortcuts": "Keyboard shortcuts",
+    "sectionLlm": "LLM cleanup",
+    "sectionSpeech": "Speech",
+    "sectionStorage": "Storage",
+    "speechProvider": "Speech provider",
+    "speechProviderDesc": "Choose which speech-to-text provider handles your dictation audio.",
+    "llmProvider": "LLM provider",
+    "llmProviderDesc": "Choose which provider cleans transcripts before insertion.",
+    "openrouterApiKey": "OpenRouter API key",
+    "openrouterApiKeyDesc": "Your OpenRouter API key for cloud-based cleanup.",
+    "openrouterModel": "OpenRouter model",
+    "openrouterModelDesc": "The model used for transcript cleanup via OpenRouter.",
+    "ollamaBaseUrl": "Ollama base URL",
+    "ollamaBaseUrlDesc": "The URL of your local Ollama instance.",
+    "ollamaModel": "Ollama model",
+    "ollamaModelDesc": "The local model used for transcript cleanup.",
+    "googleApiKey": "Google Speech API key",
+    "googleApiKeyDesc": "Your Google Cloud Speech-to-Text API key.",
+    "sourceLanguage": "Source language",
+    "sourceLanguageDesc": "The language you will be dictating in.",
+    "phraseHints": "Common words list",
+    "phraseHintsDesc": "Add words or phrases you often say, one per line, so Google Speech is more likely to recognize them.",
+    "phraseHintsPlaceholder": "e.g. invoice\nHong Kong ID\nChan Tai Man",
+    "globalHotkey": "Dictation shortcut",
+    "globalHotkeyDesc": "Click the shortcut box, then press a single key or key combination to start and stop dictation.",
+    "launchOnStartup": "Launch on startup",
+    "launchOnStartupDesc": "Start TypeFree automatically when Windows starts and open the main window.",
+    "hotkeyRecording": "Press a key or combination...",
+    "hotkeyPlaceholder": "Press a key or combination...",
+    "hotkeyInvalid": "Use a non-modifier key such as F8, D, or Ctrl+Shift+D.",
+    "hotkeyClear": "×",
+    "historyRetention": "History retention",
+    "historyRetentionDesc": "How long dictation history stays on this device.",
+    "enableCleanup": "LLM cleanup",
+    "enableCleanupDesc": "Apply light LLM cleanup before inserting text."
+  },
+  "options": {
+    "lang_yue": "Cantonese (Traditional, Hong Kong)",
+    "lang_cmn_hans": "Mandarin (Simplified, China)",
+    "lang_cmn_hant": "Mandarin (Traditional, Taiwan)",
+    "lang_en_us": "English (United States)",
+    "lang_en_gb": "English (United Kingdom)",
+    "provider_openrouter": "OpenRouter",
+    "provider_ollama": "Ollama",
+    "speech_provider_google": "Google Speech-to-Text",
+    "retention_day": "Last 24 hours",
+    "retention_week": "Last 7 days",
+    "retention_month": "Last 30 days",
+    "retention_forever": "Forever"
+  },
+  "messages": {
+    "failedLoad": "Failed to load local app data.",
+    "failedHotkey": "Failed to subscribe to global hotkey events.",
+    "settingsSaved": "Settings saved.",
+    "micFailed": "Microphone access failed. Check desktop and browser permissions.",
+    "copiedClipboard": "Copied to clipboard.",
+    "failedCopy": "Failed to copy transcript.",
+    "somethingWrong": "Something went wrong.",
+    "openrouterNotSet": "OpenRouter model not set",
+    "ollamaNotSet": "Ollama model not set"
+  }
+}

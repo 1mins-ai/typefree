@@ -1,0 +1,72 @@
+:root {
+  font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+  color: #3d3d3d;
+  --bg-top: #f6f9ff;
+  --bg-bottom: #eef4ff;
+  --bg-accent: rgba(133, 159, 211, 0.22);
+  --bg-accent-soft: rgba(96, 130, 204, 0.12);
+  --surface: rgba(255, 255, 255, 0.88);
+  --surface-strong: rgba(255, 255, 255, 0.96);
+  --surface-muted: #f7faff;
+  --surface-accent: #edf3ff;
+  --border: rgba(219, 228, 237, 0.95);
+  --border-soft: rgba(219, 228, 237, 0.72);
+  --text: #3d3d3d;
+  --text-strong: #2f3640;
+  --text-muted: #6f7f96;
+  --accent: #6082cc;
+  --accent-deep: #4768b2;
+  --success-soft: rgba(118, 179, 150, 0.16);
+  --danger: #c46a75;
+  --danger-soft: rgba(196, 106, 117, 0.14);
+  --shadow: 0 18px 38px rgba(86, 116, 168, 0.12);
+  background:
+    radial-gradient(circle at top left, var(--bg-accent), transparent 28%),
+    radial-gradient(circle at right top, var(--bg-accent-soft), transparent 26%),
+    linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+html.overlay-window,
+body.overlay-window {
+  min-width: 0;
+  min-height: 0;
+  background: transparent;
+}
+
+body {
+  color: var(--text);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+body.overlay-window #root {
+  min-height: 0;
+}
+
+p,
+h1,
+h2 {
+  margin-top: 0;
+}

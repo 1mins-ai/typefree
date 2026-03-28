@@ -1,0 +1,17 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "desktop-capability",
+  "description": "Allows the desktop window to use app commands and the global shortcut plugin.",
+  "windows": ["main", "overlay"],
+  "platforms": ["macOS", "windows"],
+  "permissions": [
+    "core:default",
+    "core:event:default",
+    "autostart:allow-enable",
+    "autostart:allow-disable",
+    "autostart:allow-is-enabled",
+    "global-shortcut:allow-is-registered",
+    "global-shortcut:allow-register",
+    "global-shortcut:allow-unregister"
+  ]
+}

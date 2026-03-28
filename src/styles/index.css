@@ -1,0 +1,10 @@
+@import "./tokens.css";
+@import "./shared.css";
+@import "../components/layout/AppSidebar.css";
+@import "../components/home/HomeView.css";
+@import "../components/history/HistoryView.css";
+@import "../components/dictionary/DictionaryView.css";
+@import "../components/dictionary/DictionaryDialog.css";
+@import "../components/settings/SettingsView.css";
+@import "../components/inputs/HotkeyRecorder.css";
+@import "../components/overlay/OverlayShell.css";
