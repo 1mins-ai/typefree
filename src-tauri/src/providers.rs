@@ -179,6 +179,95 @@ impl OllamaCleanupProvider {
     }
 }
 
+fn strip_tagged_blocks(mut text: String, tag: &str) -> String {
+    let open_tag = format!("<{tag}>");
+    let close_tag = format!("</{tag}>");
+
+    while let Some(start) = text.find(&open_tag) {
+        let Some(relative_end) = text[start + open_tag.len()..].find(&close_tag) else {
+            text.replace_range(start.., "");
+            break;
+        };
+
+        let end = start + open_tag.len() + relative_end + close_tag.len();
+        text.replace_range(start..end, "");
+    }
+
+    text
+}
+
+fn strip_code_fence(text: &str) -> String {
+    let trimmed = text.trim();
+
+    if !trimmed.starts_with("```") || !trimmed.ends_with("```") {
+        return trimmed.to_string();
+    }
+
+    let mut lines = trimmed.lines();
+    let _ = lines.next();
+    let collected = lines.collect::<Vec<_>>();
+
+    if collected.is_empty() {
+        return String::new();
+    }
+
+    let body = &collected[..collected.len().saturating_sub(1)];
+    body.join("\n").trim().to_string()
+}
+
+fn strip_prefixed_reasoning_sections(text: &str) -> String {
+    let reasoning_prefixes = [
+        "thinking:",
+        "reasoning:",
+        "analysis:",
+        "thought process:",
+        "chain-of-thought:",
+        "chain of thought:",
+        "internal reasoning:",
+    ];
+
+    let mut skipping = true;
+    let mut kept = Vec::new();
+
+    for line in text.lines() {
+        let trimmed = line.trim();
+        let lower = trimmed.to_ascii_lowercase();
+
+        if skipping {
+            if trimmed.is_empty() {
+                continue;
+            }
+
+            if reasoning_prefixes
+                .iter()
+                .any(|prefix| lower.starts_with(prefix))
+            {
+                continue;
+            }
+
+            skipping = false;
+        }
+
+        kept.push(line);
+    }
+
+    kept.join("\n").trim().to_string()
+}
+
+fn sanitize_cleanup_output(raw: &str, fallback: &str) -> String {
+    let mut cleaned = raw.trim().to_string();
+    cleaned = strip_tagged_blocks(cleaned, "think");
+    cleaned = strip_tagged_blocks(cleaned, "thinking");
+    cleaned = strip_code_fence(&cleaned);
+    cleaned = strip_prefixed_reasoning_sections(&cleaned);
+
+    if cleaned.is_empty() {
+        fallback.trim().to_string()
+    } else {
+        cleaned
+    }
+}
+
 pub async fn cleanup_transcript(
     transcript: &str,
     settings: &AppSettings,
@@ -212,7 +301,7 @@ impl LlmPostProcessor for OpenRouterCleanupProvider {
         }
 
         let prompt = format!(
-            "You are cleaning a speech-to-text transcript. Keep the original language. Do not translate. Only lightly improve punctuation, spacing, filler words, and duplicate fragments. Preserve intent and wording as much as possible.\n\nTranscript:\n{}",
+            "You are cleaning a speech-to-text transcript. Keep the original language. Do not translate. Only lightly improve punctuation, spacing, filler words, and duplicate fragments. Preserve intent and wording as much as possible. Do not include reasoning, analysis, chain-of-thought, hidden thinking, or any explanation. Return only the final cleaned transcript text.\n\nTranscript:\n{}",
             transcript
         );
 
@@ -228,10 +317,13 @@ impl LlmPostProcessor for OpenRouterCleanupProvider {
             .json(&json!({
                 "model": settings.openrouter_model,
                 "temperature": 0.1,
+                "reasoning": {
+                    "exclude": true
+                },
                 "messages": [
                     {
                         "role": "system",
-                        "content": "Return only the cleaned transcript text."
+                        "content": "Return only the cleaned transcript text. Never include reasoning, analysis, or thinking traces."
                     },
                     {
                         "role": "user",
@@ -261,13 +353,8 @@ impl LlmPostProcessor for OpenRouterCleanupProvider {
             .choices
             .into_iter()
             .find_map(|choice| choice.message.content)
-            .unwrap_or_else(|| transcript.to_string())
-            .trim()
-            .to_string();
-
-        if cleaned.is_empty() {
-            return Ok(transcript.to_string());
-        }
+            .map(|content| sanitize_cleanup_output(&content, transcript))
+            .unwrap_or_else(|| transcript.to_string());
 
         Ok(cleaned)
     }
@@ -284,7 +371,7 @@ impl LlmPostProcessor for OllamaCleanupProvider {
         }
 
         let prompt = format!(
-            "You are cleaning a speech-to-text transcript. Keep the original language. Do not translate. Only lightly improve punctuation, spacing, filler words, and duplicate fragments. Preserve intent and wording as much as possible.\n\nTranscript:\n{}",
+            "You are cleaning a speech-to-text transcript. Keep the original language. Do not translate. Only lightly improve punctuation, spacing, filler words, and duplicate fragments. Preserve intent and wording as much as possible. Do not include reasoning, analysis, chain-of-thought, hidden thinking, or any explanation. Return only the final cleaned transcript text.\n\nTranscript:\n{}",
             transcript
         );
 
@@ -298,7 +385,7 @@ impl LlmPostProcessor for OllamaCleanupProvider {
                 "messages": [
                     {
                         "role": "system",
-                        "content": "Return only the cleaned transcript text."
+                        "content": "Return only the cleaned transcript text. Never include reasoning, analysis, or thinking traces."
                     },
                     {
                         "role": "user",
@@ -327,13 +414,8 @@ impl LlmPostProcessor for OllamaCleanupProvider {
         let cleaned = body
             .message
             .and_then(|message| message.content)
-            .unwrap_or_else(|| transcript.to_string())
-            .trim()
-            .to_string();
-
-        if cleaned.is_empty() {
-            return Err("Ollama returned an empty cleanup result.".to_string());
-        }
+            .map(|content| sanitize_cleanup_output(&content, transcript))
+            .unwrap_or_else(|| transcript.to_string());
 
         Ok(cleaned)
     }

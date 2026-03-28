@@ -3,6 +3,10 @@
 繁體中文：TypeFree 是一個目前以 Windows 為目標的桌面語音輸入工具，使用 Google Speech-to-Text 做語音轉文字，並可配合 OpenRouter 或 Ollama 做輕量文字整理，同時支援自訂快捷鍵、系統匣常駐、overlay 狀態提示與本地歷史紀錄。  
 English: TypeFree is a Windows-focused desktop dictation tool that uses Google Speech-to-Text for transcription and can pair with OpenRouter or Ollama for light transcript cleanup, with customizable shortcuts, tray support, overlay status feedback, and local history.
 
+## Demo / 示範影片
+
+![TypeFree demo](./docs/demo.gif)
+
 ## Download / 下載
 
 繁體中文：你可以直接從 GitHub Releases 下載最新版本。  
