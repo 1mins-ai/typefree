@@ -5,9 +5,10 @@ import { DictionaryView } from "./components/dictionary/DictionaryView";
 import { HistoryView } from "./components/history/HistoryView";
 import { HomeView } from "./components/home/HomeView";
 import { AppSidebar } from "./components/layout/AppSidebar";
+import { OnboardingView } from "./components/onboarding/OnboardingView";
 import { OverlayShell } from "./components/overlay/OverlayShell";
 import { SettingsView } from "./components/settings/SettingsView";
-import type { AppView } from "./constants/app";
+import { sidebarLanguageOptions, type AppView } from "./constants/app";
 import { useAppBootstrap } from "./hooks/useAppBootstrap";
 import { useDictionaryManager } from "./hooks/useDictionaryManager";
 import { useDictationSession } from "./hooks/useDictationSession";
@@ -20,6 +21,9 @@ function AppShell() {
   const [saving, setSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState("");
   const [copyMessage, setCopyMessage] = useState("");
+  const [permissionLoading, setPermissionLoading] = useState(false);
+  const [completionLoading, setCompletionLoading] = useState(false);
+  const [micPermissionGranted, setMicPermissionGranted] = useState(false);
   const copyTimerRef = useRef<number | null>(null);
   const openRouterKeyInputRef = useRef<HTMLInputElement | null>(null);
   const googleKeyInputRef = useRef<HTMLInputElement | null>(null);
@@ -33,9 +37,11 @@ function AppShell() {
     setHistory,
     error,
     setError,
+    bootstrapped,
     autostartEnabled,
     autostartLoading,
     handleAutostartToggle,
+    reloadAppData,
   } = useAppBootstrap({
     t,
     onHotkeyTriggered: () => hotkeyHandlerRef.current(),
@@ -104,6 +110,12 @@ function AppShell() {
     setCopyMessage("");
   }, [i18n.language, setError]);
 
+  useEffect(() => {
+    if (settings.hasCompletedOnboarding) {
+      setMicPermissionGranted(false);
+    }
+  }, [settings.hasCompletedOnboarding]);
+
   const dictionary = useDictionaryManager({
     phraseHints: settings.phraseHints,
     onPhraseHintsChange: (phraseHints) => {
@@ -156,6 +168,74 @@ function AppShell() {
       console.error(deleteError);
       setError(deleteError instanceof Error ? deleteError.message : String(deleteError));
     }
+  }
+
+  async function handleRequestMicPermission() {
+    setPermissionLoading(true);
+    setError("");
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      stream.getTracks().forEach((track) => track.stop());
+      setMicPermissionGranted(true);
+    } catch (permissionError) {
+      console.error(permissionError);
+      setMicPermissionGranted(false);
+      setError(t("onboarding.permissionError"));
+    } finally {
+      setPermissionLoading(false);
+    }
+  }
+
+  async function handleOnboardingFinish() {
+    if (!micPermissionGranted) {
+      return;
+    }
+
+    setCompletionLoading(true);
+    setError("");
+
+    try {
+      const nextSettings: AppSettings = {
+        ...getCurrentSettings(),
+        hasCompletedOnboarding: true,
+      };
+
+      await saveSettings(nextSettings);
+      const { loadedSettings, loadedHistory } = await reloadAppData();
+      setSettings(loadedSettings);
+      setHistory(loadedHistory);
+      setActiveView("home");
+    } catch (saveError) {
+      console.error(saveError);
+      setError(saveError instanceof Error ? saveError.message : String(saveError));
+    } finally {
+      setCompletionLoading(false);
+    }
+  }
+
+  if (!bootstrapped) {
+    return <div className="onboarding-shell" />;
+  }
+
+  if (!settings.hasCompletedOnboarding) {
+    return (
+      <OnboardingView
+        t={t}
+        currentLanguage={i18n.resolvedLanguage ?? i18n.language}
+        languageLabel={t("sidebar.interfaceLanguage")}
+        languageOptions={sidebarLanguageOptions}
+        permissionGranted={micPermissionGranted}
+        permissionLoading={permissionLoading}
+        completionLoading={completionLoading}
+        error={error}
+        onLanguageChange={(language) => {
+          void i18n.changeLanguage(language);
+        }}
+        onRequestPermission={handleRequestMicPermission}
+        onFinish={handleOnboardingFinish}
+      />
+    );
   }
 
   return (

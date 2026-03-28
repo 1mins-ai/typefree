@@ -7,4 +7,5 @@
 @import "../components/dictionary/DictionaryDialog.css";
 @import "../components/settings/SettingsView.css";
 @import "../components/inputs/HotkeyRecorder.css";
+@import "../components/onboarding/OnboardingView.css";
 @import "../components/overlay/OverlayShell.css";

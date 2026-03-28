@@ -24,6 +24,7 @@ export function useAppBootstrap({
   const [settings, setSettings] = useState<AppSettings>(defaultSettings);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [error, setError] = useState("");
+  const [bootstrapped, setBootstrapped] = useState(false);
   const [autostartEnabled, setAutostartEnabled] = useState(false);
   const [autostartLoading, setAutostartLoading] = useState(true);
   const hotkeyHandlerRef = useRef(onHotkeyTriggered);
@@ -46,6 +47,7 @@ export function useAppBootstrap({
     const [loadedSettings, loadedHistory] = await Promise.all([loadSettings(), loadHistory()]);
     setSettings(loadedSettings);
     setHistory(loadedHistory);
+    setBootstrapped(true);
     return { loadedSettings, loadedHistory };
   }, []);
 
@@ -56,6 +58,7 @@ export function useAppBootstrap({
     reloadAppData().catch((loadError) => {
       console.error(loadError);
       setError(tRef.current("messages.failedLoad"));
+      setBootstrapped(true);
     });
 
     listenForHotkey(() => {
@@ -123,6 +126,7 @@ export function useAppBootstrap({
     setHistory,
     error,
     setError,
+    bootstrapped,
     autostartEnabled,
     autostartLoading,
     handleAutostartToggle,

@@ -27,6 +27,8 @@ pub struct AppSettings {
     pub cleanup_enabled: bool,
     #[serde(default = "default_history_retention")]
     pub history_retention: String,
+    #[serde(default)]
+    pub has_completed_onboarding: bool,
 }
 
 impl Default for AppSettings {
@@ -41,9 +43,10 @@ impl Default for AppSettings {
             google_api_key: String::new(),
             phrase_hints: String::new(),
             source_language: "yue-Hant-HK".to_string(),
-            global_hotkey: "CommandOrControl+Shift+D".to_string(),
+            global_hotkey: "Ctrl+`".to_string(),
             cleanup_enabled: true,
             history_retention: "forever".to_string(),
+            has_completed_onboarding: false,
         }
     }
 }
@@ -73,7 +76,7 @@ fn default_source_language() -> String {
 }
 
 fn default_global_hotkey() -> String {
-    "CommandOrControl+Shift+D".to_string()
+    "Ctrl+`".to_string()
 }
 
 fn default_cleanup_enabled() -> bool {

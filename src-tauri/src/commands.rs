@@ -212,6 +212,7 @@ fn merge_runtime_settings(stored: &AppSettings, incoming: AppSettings) -> AppSet
         } else {
             incoming.history_retention
         },
+        has_completed_onboarding: incoming.has_completed_onboarding,
     }
 }
 

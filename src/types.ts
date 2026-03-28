@@ -24,6 +24,7 @@ export interface AppSettings {
   globalHotkey: string;
   cleanupEnabled: boolean;
   historyRetention: HistoryRetention;
+  hasCompletedOnboarding: boolean;
 }
 
 export interface HistoryEntry {

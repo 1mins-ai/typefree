@@ -20,9 +20,10 @@ export const defaultSettings: AppSettings = {
   googleApiKey: "",
   phraseHints: "",
   sourceLanguage: "yue-Hant-HK",
-  globalHotkey: "CommandOrControl+Shift+D",
+  globalHotkey: "Ctrl+`",
   cleanupEnabled: true,
   historyRetention: "forever",
+  hasCompletedOnboarding: false,
 };
 
 export const defaultOverlayState: OverlayState = {
