@@ -1,11 +1,12 @@
 import { invoke } from "@tauri-apps/api/core";
-import { listen } from "@tauri-apps/api/event";
+import { emit, listen } from "@tauri-apps/api/event";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import type {
   AppSettings,
   DictationResult,
   HistoryEntry,
   HotkeyStatePayload,
+  OverlayActionPayload,
   OverlayState,
   SessionStatusPayload,
 } from "../types";
@@ -109,6 +110,16 @@ export async function listenForOverlayState(
   callback: (payload: OverlayState) => void,
 ) {
   return listen<OverlayState>("overlay-state", (event) => callback(event.payload));
+}
+
+export async function emitOverlayAction(payload: OverlayActionPayload) {
+  return emit("overlay-action", payload);
+}
+
+export async function listenForOverlayAction(
+  callback: (payload: OverlayActionPayload) => void,
+) {
+  return listen<OverlayActionPayload>("overlay-action", (event) => callback(event.payload));
 }
 
 export function isOverlayWindow() {

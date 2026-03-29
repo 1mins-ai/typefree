@@ -3,7 +3,7 @@ import type { CSSProperties } from "react";
 import { useTranslation } from "react-i18next";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { defaultOverlayState } from "../../constants/app";
-import { getOverlayState, listenForOverlayState } from "../../lib/tauri";
+import { emitOverlayAction, getOverlayState, listenForOverlayState } from "../../lib/tauri";
 import type { OverlayState } from "../../types";
 
 export function OverlayShell() {
@@ -21,7 +21,7 @@ export function OverlayShell() {
     const currentWindow = getCurrentWindow();
     void currentWindow.setAlwaysOnTop(true);
     void currentWindow.setFocusable(false);
-    void currentWindow.setIgnoreCursorEvents(true);
+    void currentWindow.setIgnoreCursorEvents(false);
 
     getOverlayState()
       .then((state) => {
@@ -65,10 +65,18 @@ export function OverlayShell() {
   return (
     <div className={`overlay-shell ${overlayState.visible ? "is-visible" : ""}`}>
       <div className={`overlay-pill overlay-${overlayState.status}`}>
-        <div className="overlay-endcap overlay-endcap-left">
+        <button
+          type="button"
+          className="overlay-endcap overlay-button overlay-endcap-left"
+          disabled={overlayState.status !== "listening"}
+          aria-label={t("overlay.cancel")}
+          onClick={() => {
+            void emitOverlayAction({ action: "cancel" });
+          }}
+        >
           <span className="overlay-close-line line-a" />
           <span className="overlay-close-line line-b" />
-        </div>
+        </button>
 
         {isProcessing ? (
           <div className="overlay-thinking">{t("overlay.thinking")}</div>
@@ -76,10 +84,18 @@ export function OverlayShell() {
           <div className="overlay-wave">{bars}</div>
         )}
 
-        <div className="overlay-endcap overlay-endcap-right">
+        <button
+          type="button"
+          className="overlay-endcap overlay-button overlay-endcap-right"
+          disabled={overlayState.status !== "listening"}
+          aria-label={t("overlay.finish")}
+          onClick={() => {
+            void emitOverlayAction({ action: "submit" });
+          }}
+        >
           <span className="overlay-check-line stem" />
           <span className="overlay-check-line arm" />
-        </div>
+        </button>
       </div>
     </div>
   );

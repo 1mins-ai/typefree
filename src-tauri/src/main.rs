@@ -98,8 +98,8 @@ fn create_overlay_window(app: &mut tauri::App) -> Result<(), String> {
         .set_focusable(false)
         .map_err(|error| format!("Failed to make overlay non-focusable: {error}"))?;
     overlay
-        .set_ignore_cursor_events(true)
-        .map_err(|error| format!("Failed to make overlay click-through: {error}"))?;
+        .set_ignore_cursor_events(false)
+        .map_err(|error| format!("Failed to enable overlay pointer events: {error}"))?;
     commands::position_overlay_window(&overlay)?;
 
     Ok(())

@@ -46,6 +46,29 @@
     inset 0 -1px 2px rgba(0, 0, 0, 0.12);
 }
 
+.overlay-button {
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  transition:
+    transform 120ms ease,
+    opacity 120ms ease,
+    box-shadow 120ms ease;
+}
+
+.overlay-button:hover:not(:disabled) {
+  transform: scale(1.06);
+}
+
+.overlay-button:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+.overlay-button:disabled {
+  cursor: default;
+  opacity: 0.56;
+}
+
 .overlay-close-line,
 .overlay-check-line {
   position: absolute;

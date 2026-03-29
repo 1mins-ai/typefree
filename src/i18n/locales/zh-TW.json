@@ -51,7 +51,7 @@
   "home": {
     "eyebrow": "首頁",
     "heroTitle": "自然講、乾淨寫，常用設定都放近你手邊。",
-    "heroCopy": "按一次 <keycap>{{hotkey}}</keycap> 即可在任何地方開始 dictation，再按一次停止。下方狀態膠囊會顯示轉錄、整理與插入進度。",
+    "heroCopy": "在任何地方按住 <keycap>{{hotkey}}</keycap> 即可開始錄音，放開就會停止。下方狀態膠囊會顯示轉錄、整理與插入進度。",
     "micLevel": "麥克風音量 {{level}}%",
     "waitingCopy": "等候你下一段語音輸入。"
   },

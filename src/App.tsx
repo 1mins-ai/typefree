@@ -12,8 +12,8 @@ import { sidebarLanguageOptions, type AppView } from "./constants/app";
 import { useAppBootstrap } from "./hooks/useAppBootstrap";
 import { useDictionaryManager } from "./hooks/useDictionaryManager";
 import { useDictationSession } from "./hooks/useDictationSession";
-import { deleteHistoryEntry, isOverlayWindow, loadHistory, loadSettings, saveSettings } from "./lib/tauri";
-import type { AppSettings, HotkeyStatePayload, SessionStatus } from "./types";
+import { deleteHistoryEntry, isOverlayWindow, listenForOverlayAction, loadHistory, loadSettings, saveSettings } from "./lib/tauri";
+import type { AppSettings, HotkeyStatePayload, OverlayActionPayload, SessionStatus } from "./types";
 
 function AppShell() {
   const { t, i18n } = useTranslation();
@@ -29,6 +29,9 @@ function AppShell() {
   const googleKeyInputRef = useRef<HTMLInputElement | null>(null);
   const hotkeyHandlerRef = useRef<(payload: HotkeyStatePayload) => void | Promise<void>>((_payload) => undefined);
   const sessionStatusHandlerRef = useRef<(status: SessionStatus) => void>(() => undefined);
+  const overlayActionHandlerRef = useRef<(payload: OverlayActionPayload) => void | Promise<void>>(
+    (_payload) => undefined,
+  );
 
   const {
     settings,
@@ -84,6 +87,8 @@ function AppShell() {
     transcript,
     cleanedText,
     handleHotkeyStateChange,
+    cancelCurrentSession,
+    finishCurrentSession,
   } = useDictationSession({
     t,
     getCurrentSettings,
@@ -96,7 +101,33 @@ function AppShell() {
   useEffect(() => {
     hotkeyHandlerRef.current = handleHotkeyStateChange;
     sessionStatusHandlerRef.current = setStatus;
-  }, [handleHotkeyStateChange, setStatus]);
+    overlayActionHandlerRef.current = async ({ action }) => {
+      if (action === "cancel") {
+        await cancelCurrentSession();
+        return;
+      }
+
+      await finishCurrentSession();
+    };
+  }, [cancelCurrentSession, finishCurrentSession, handleHotkeyStateChange, setStatus]);
+
+  useEffect(() => {
+    let unlistenOverlayAction: (() => void) | undefined;
+
+    listenForOverlayAction((payload) => {
+      void overlayActionHandlerRef.current(payload);
+    })
+      .then((unlisten) => {
+        unlistenOverlayAction = unlisten;
+      })
+      .catch((listenError) => {
+        console.error(listenError);
+      });
+
+    return () => {
+      unlistenOverlayAction?.();
+    };
+  }, []);
 
   useEffect(() => {
     return () => {

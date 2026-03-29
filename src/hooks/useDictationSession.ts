@@ -343,6 +343,18 @@ export function useDictationSession({
     }
   }, [startRecording, stopRecordingAndProcess]);
 
+  const cancelCurrentSession = useCallback(async () => {
+    if (statusRef.current === "listening") {
+      await cancelRecording();
+    }
+  }, [cancelRecording]);
+
+  const finishCurrentSession = useCallback(async () => {
+    if (statusRef.current === "listening") {
+      await stopRecordingAndProcess();
+    }
+  }, [stopRecordingAndProcess]);
+
   return {
     status,
     setStatus,
@@ -350,5 +362,7 @@ export function useDictationSession({
     transcript,
     cleanedText,
     handleHotkeyStateChange,
+    cancelCurrentSession,
+    finishCurrentSession,
   };
 }

@@ -56,3 +56,7 @@ export interface OverlayState {
   level: number;
   message: string;
 }
+
+export interface OverlayActionPayload {
+  action: "cancel" | "submit";
+}
