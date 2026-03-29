@@ -13,6 +13,7 @@ import type {
   DictationResult,
   HistoryEntry,
   HotkeyStatePayload,
+  PromptMapping,
   SessionStatus,
 } from "../types";
 
@@ -52,6 +53,7 @@ export function useDictationSession({
   const startSoundRef = useRef<HTMLAudioElement | null>(null);
   const stopSoundRef = useRef<HTMLAudioElement | null>(null);
   const recordingStartedAtRef = useRef<number | null>(null);
+  const activeMappingRef = useRef<Pick<PromptMapping, "id" | "kind"> | null>(null);
 
   useEffect(() => {
     statusRef.current = status;
@@ -136,6 +138,7 @@ export function useDictationSession({
     streamRef.current = null;
     isRecordingRef.current = false;
     recordingStartedAtRef.current = null;
+    activeMappingRef.current = null;
     setMicLevel(0);
   }, []);
 
@@ -192,7 +195,7 @@ export function useDictationSession({
     ]);
   }, [setHistory]);
 
-  const startRecording = useCallback(async () => {
+  const startRecording = useCallback(async (payload: HotkeyStatePayload) => {
     if (
       isRecordingRef.current ||
       statusRef.current === "transcribing" ||
@@ -230,6 +233,10 @@ export function useDictationSession({
       recorder.start();
       isRecordingRef.current = true;
       recordingStartedAtRef.current = Date.now();
+      activeMappingRef.current = {
+        id: payload.mappingId,
+        kind: payload.mappingKind,
+      };
       setStatus("listening");
       playCue(startSoundRef.current, "start");
 
@@ -279,6 +286,11 @@ export function useDictationSession({
 
     const recorder = mediaRecorderRef.current;
     const mimeType = recorder.mimeType || "audio/webm";
+    const currentSettings = getCurrentSettings();
+    const activeMapping = activeMappingRef.current;
+    const selectedMapping = activeMapping
+      ? currentSettings.promptMappings.find((mapping) => mapping.id === activeMapping.id)
+      : undefined;
 
     const elapsed = recordingStartedAtRef.current === null
       ? SHORT_PRESS_THRESHOLD_MS
@@ -306,7 +318,9 @@ export function useDictationSession({
       const result = await processDictation({
         audioBase64: await blobToBase64(audioBlob),
         mimeType,
-        settings: getCurrentSettings(),
+        settings: currentSettings,
+        mappingKind: activeMapping?.kind,
+        mappingPrompt: selectedMapping?.prompt,
       });
 
       applyDictationResult(result);
@@ -332,13 +346,17 @@ export function useDictationSession({
       const currentStatus = statusRef.current;
 
       if (currentStatus === "idle" || currentStatus === "done" || currentStatus === "error") {
-        await startRecording();
+        await startRecording(payload);
       }
 
       return;
     }
 
-    if (payload.state === "released" && statusRef.current === "listening") {
+    if (
+      payload.state === "released" &&
+      statusRef.current === "listening" &&
+      activeMappingRef.current?.id === payload.mappingId
+    ) {
       await stopRecordingAndProcess();
     }
   }, [startRecording, stopRecordingAndProcess]);

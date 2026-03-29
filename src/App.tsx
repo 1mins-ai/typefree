@@ -7,11 +7,13 @@ import { HomeView } from "./components/home/HomeView";
 import { AppSidebar } from "./components/layout/AppSidebar";
 import { OnboardingView } from "./components/onboarding/OnboardingView";
 import { OverlayShell } from "./components/overlay/OverlayShell";
+import { PromptMappingsView } from "./components/prompts/PromptMappingsView";
 import { SettingsView } from "./components/settings/SettingsView";
 import { sidebarLanguageOptions, type AppView } from "./constants/app";
 import { useAppBootstrap } from "./hooks/useAppBootstrap";
 import { useDictionaryManager } from "./hooks/useDictionaryManager";
 import { useDictationSession } from "./hooks/useDictationSession";
+import { normalizePromptMappings, validatePromptMappings } from "./lib/appHelpers";
 import { deleteHistoryEntry, isOverlayWindow, listenForOverlayAction, loadHistory, loadSettings, saveSettings } from "./lib/tauri";
 import type { AppSettings, HotkeyStatePayload, OverlayActionPayload, SessionStatus } from "./types";
 
@@ -65,9 +67,17 @@ function AppShell() {
   }
 
   function getCurrentSettings() {
-    const nextSettings: AppSettings = { ...settings };
+    const nextSettings: AppSettings = {
+      ...settings,
+      promptMappings: normalizePromptMappings(settings),
+    };
     const openRouterValue = openRouterKeyInputRef.current?.value?.trim();
     const googleValue = googleKeyInputRef.current?.value?.trim();
+
+    const defaultMapping = nextSettings.promptMappings.find((mapping) => mapping.kind === "default");
+    if (defaultMapping) {
+      nextSettings.globalHotkey = defaultMapping.hotkey;
+    }
 
     if (openRouterValue) {
       nextSettings.openrouterApiKey = openRouterValue;
@@ -164,12 +174,21 @@ function AppShell() {
   }
 
   async function persistSettings() {
-    setSaving(true);
     setError("");
     setSaveMessage("");
 
+    const nextSettings = getCurrentSettings();
+    const mappingValidationMessage = validatePromptMappings(nextSettings, t);
+
+    if (mappingValidationMessage) {
+      setError(mappingValidationMessage);
+      return;
+    }
+
+    setSaving(true);
+
     try {
-      await saveSettings(getCurrentSettings());
+      await saveSettings(nextSettings);
       const [reloadedSettings, refreshedHistory] = await Promise.all([loadSettings(), loadHistory()]);
       setSettings(reloadedSettings);
       setHistory(refreshedHistory);
@@ -319,6 +338,18 @@ function AppShell() {
             onOpenAddDialog={dictionary.openAddDictionaryDialog}
             onOpenEditDialog={dictionary.openEditDictionaryDialog}
             onRemoveWord={dictionary.removeDictionaryWord}
+            onSave={persistSettings}
+            saving={saving}
+            error={error}
+            saveMessage={saveMessage}
+          />
+        ) : null}
+
+        {activeView === "prompts" ? (
+          <PromptMappingsView
+            t={t}
+            settings={settings}
+            onSettingsChange={setSettings}
             onSave={persistSettings}
             saving={saving}
             error={error}

@@ -70,6 +70,8 @@ export async function processDictation(payload: {
   audioBase64: string;
   mimeType: string;
   settings: AppSettings;
+  mappingKind?: "default" | "custom";
+  mappingPrompt?: string;
 }) {
   return runCommand<DictationResult>("process_dictation", payload);
 }

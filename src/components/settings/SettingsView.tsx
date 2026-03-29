@@ -1,5 +1,4 @@
 import { historyRetentionOptions, languageOptions, llmProviderOptions, speechProviderOptions } from "../../constants/app";
-import { HotkeyRecorder } from "../inputs/HotkeyRecorder";
 import type { AppSettings, HistoryRetention, LlmProvider } from "../../types";
 import type { TFunction } from "i18next";
 
@@ -42,33 +41,6 @@ export function SettingsView({
       </div>
 
       <div className="settings-sections">
-        <div className="settings-section-divider">
-          <span className="settings-section-icon" aria-hidden="true">K</span>
-          <span>{t("settingPage.sectionShortcuts")}</span>
-        </div>
-
-        <div className="setting-row">
-          <div className="setting-info">
-            <p className="setting-label">{t("settingPage.globalHotkey")}</p>
-            <p className="setting-desc">{t("settingPage.globalHotkeyDesc")}</p>
-          </div>
-          <div className="setting-control">
-            <HotkeyRecorder
-              value={settings.globalHotkey}
-              onChange={(hotkey) => {
-                onSettingsChange((current) => ({ ...current, globalHotkey: hotkey }));
-              }}
-              onClear={() => {
-                onSettingsChange((current) => ({ ...current, globalHotkey: "" }));
-              }}
-              recordingLabel={t("settingPage.hotkeyRecording")}
-              placeholderLabel={t("settingPage.hotkeyPlaceholder")}
-              invalidLabel={t("settingPage.hotkeyInvalid")}
-              clearLabel={t("settingPage.hotkeyClear")}
-            />
-          </div>
-        </div>
-
         <div className="setting-row">
           <div className="setting-info">
             <p className="setting-label">{t("settingPage.launchOnStartup")}</p>

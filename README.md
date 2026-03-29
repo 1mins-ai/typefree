@@ -49,6 +49,14 @@ English:
 - Keep local dictation history
 - Support common words and phrase hints to improve recognition for specific terms
 
+### Custom Prompt / 自訂 Prompt
+
+繁體中文：TypeFree 支援將不同快捷鍵對應到不同 Prompt。你可以為每一條 mapping 自訂名稱、快捷鍵同 Prompt 指令，例如一條用來生成正式 Email，另一條用來整理成 social media post。錄音流程仍然係 hold-to-talk，但放手之後會按返對應 Prompt 輸出唔同內容。
+
+English: TypeFree supports mapping different hotkeys to different prompts. You can give each mapping its own label, shortcut, and prompt instruction, for example one for writing a formal email and another for turning the same transcript into a social media post. The recording flow stays hold-to-talk, but the final output changes based on the selected prompt.
+
+![Custom prompt mapping](./docs/selfdefinedprompt.png)
+
 ## 4. Windows-Only Status / 目前只支援 Windows
 
 繁體中文：目前這個 project 只支援 Windows。現時的桌面 release 流程、tray 行為、global shortcut 體驗，以及文字插入相關流程，都是以 Windows 使用情境作為主要目標來設計與測試。README 不會假設 macOS 或 Linux 已經可正式使用。  

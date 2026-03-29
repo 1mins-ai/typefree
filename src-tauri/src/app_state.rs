@@ -91,6 +91,7 @@ pub fn load_settings_from_disk<R: Runtime>(app: &AppHandle<R>) -> Result<AppSett
     let content =
         fs::read_to_string(path).map_err(|error| format!("Failed to read settings: {error}"))?;
     serde_json::from_str::<AppSettings>(&content)
+        .map(|settings| settings.normalized())
         .map_err(|error| format!("Failed to parse settings JSON: {error}"))
 }
 
@@ -99,7 +100,7 @@ pub fn save_settings_to_disk<R: Runtime>(
     settings: &AppSettings,
 ) -> Result<(), String> {
     let path = settings_path(app)?;
-    let payload = serde_json::to_string_pretty(settings)
+    let payload = serde_json::to_string_pretty(&settings.clone().normalized())
         .map_err(|error| format!("Failed to serialize settings: {error}"))?;
     fs::write(path, payload).map_err(|error| format!("Failed to write settings: {error}"))
 }

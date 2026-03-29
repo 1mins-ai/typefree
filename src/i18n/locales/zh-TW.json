@@ -7,6 +7,7 @@
     "home": "首頁",
     "history": "歷史紀錄",
     "dictionary": "字典",
+    "prompts": "Prompt 捷徑",
     "setting": "設定"
   },
   "status": {
@@ -18,7 +19,9 @@
     "error": "需要留意"
   },
   "overlay": {
-    "thinking": "處理中"
+    "thinking": "處理中",
+    "cancel": "取消錄音",
+    "finish": "完成錄音"
   },
   "sidebar": {
     "availableAnywhere": "隨處可用",
@@ -121,6 +124,35 @@
     "editAriaLabel": "編輯 {{word}}",
     "duplicateError": "這個詞語已經存在於字典中。",
     "requiredError": "請先輸入詞語或短句。"
+  },
+  "promptPage": {
+    "eyebrow": "Prompt 捷徑",
+    "title": "將全域快捷鍵對應到不同 Prompt 輸出",
+    "copy": "你可以編輯預設 mapping，或者新增更多 Prompt 捷徑，將同一段語音轉成唔同類型嘅輸出。",
+    "addMapping": "新增 mapping",
+    "defaultTitle": "預設 dictation 快捷鍵",
+    "defaultBadge": "預設",
+    "defaultCopy": "呢條保留 mapping 會同步成為 app 主快捷鍵。Prompt 留空就保留一般 dictation；一旦填咗，就會用呢條 prompt 取代預設 cleanup prompt。",
+    "customTitleFallback": "自訂 Prompt",
+    "customBadge": "自訂",
+    "customCopy": "按住呢條快捷鍵錄音，放開之後會將 transcript 套用到呢條 Prompt。",
+    "labelLabel": "標籤",
+    "defaultLabelPlaceholder": "預設 dictation",
+    "customLabelPlaceholder": "例如：正式 Email",
+    "hotkeyLabel": "快捷鍵",
+    "promptLabel": "Prompt 指令",
+    "defaultPromptPlaceholder": "留空就保留一般 dictation；如果想改寫預設輸出，就喺度填入 prompt。",
+    "promptPlaceholder": "例如：將呢段 transcript 改寫成一封正式 email，包含清晰主旨同禮貌結尾。",
+    "deleteMapping": "刪除 mapping",
+    "emptyTitle": "暫時未有自訂 Prompt mapping",
+    "emptyCopy": "新增第一條自訂快捷鍵，將同一段語音轉成另一種輸出格式。",
+    "validation": {
+      "labelRequired": "每條 prompt mapping 都要有標籤。",
+      "defaultHotkeyRequired": "預設 dictation 快捷鍵不能留空。",
+      "hotkeyRequired": "每條自訂 Prompt mapping 都要有快捷鍵。",
+      "promptRequired": "每條自訂 Prompt mapping 都要有 Prompt。",
+      "duplicateHotkey": "快捷鍵 {{hotkey}} 重複咗，請改成其他組合。"
+    }
   },
   "settingPage": {
     "title": "設定",

@@ -2,6 +2,33 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
+pub struct PromptMapping {
+    #[serde(default = "default_mapping_id")]
+    pub id: String,
+    #[serde(default)]
+    pub label: String,
+    #[serde(default)]
+    pub hotkey: String,
+    #[serde(default)]
+    pub prompt: String,
+    #[serde(default = "default_mapping_kind")]
+    pub kind: String,
+}
+
+impl PromptMapping {
+    pub fn default_mapping(hotkey: String) -> Self {
+        Self {
+            id: default_mapping_id(),
+            label: default_mapping_label(),
+            hotkey,
+            prompt: String::new(),
+            kind: default_mapping_kind(),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct AppSettings {
     #[serde(default = "default_speech_provider")]
     pub speech_provider: String,
@@ -29,6 +56,24 @@ pub struct AppSettings {
     pub history_retention: String,
     #[serde(default)]
     pub has_completed_onboarding: bool,
+    #[serde(default = "default_prompt_mappings")]
+    pub prompt_mappings: Vec<PromptMapping>,
+}
+
+impl AppSettings {
+    pub fn normalized(mut self) -> Self {
+        self.prompt_mappings = normalize_prompt_mappings(&self.global_hotkey, &self.prompt_mappings);
+
+        if let Some(default_mapping) = self
+            .prompt_mappings
+            .iter()
+            .find(|mapping| mapping.kind == "default")
+        {
+            self.global_hotkey = default_mapping.hotkey.clone();
+        }
+
+        self
+    }
 }
 
 impl Default for AppSettings {
@@ -47,6 +92,7 @@ impl Default for AppSettings {
             cleanup_enabled: true,
             history_retention: "forever".to_string(),
             has_completed_onboarding: false,
+            prompt_mappings: default_prompt_mappings(),
         }
     }
 }
@@ -85,6 +131,73 @@ fn default_cleanup_enabled() -> bool {
 
 fn default_history_retention() -> String {
     "forever".to_string()
+}
+
+fn default_prompt_mappings() -> Vec<PromptMapping> {
+    vec![PromptMapping::default_mapping(default_global_hotkey())]
+}
+
+fn default_mapping_id() -> String {
+    "default".to_string()
+}
+
+fn default_mapping_kind() -> String {
+    "default".to_string()
+}
+
+fn default_mapping_label() -> String {
+    "Default dictation".to_string()
+}
+
+fn normalize_prompt_mappings(global_hotkey: &str, mappings: &[PromptMapping]) -> Vec<PromptMapping> {
+    let default_hotkey = mappings
+        .iter()
+        .find(|mapping| mapping.kind == "default" && !mapping.hotkey.trim().is_empty())
+        .map(|mapping| mapping.hotkey.trim().to_string())
+        .filter(|hotkey| !hotkey.is_empty())
+        .unwrap_or_else(|| {
+            let trimmed = global_hotkey.trim();
+            if trimmed.is_empty() {
+                default_global_hotkey()
+            } else {
+                trimmed.to_string()
+            }
+        });
+
+    let mut normalized = vec![PromptMapping::default_mapping(default_hotkey)];
+
+    if let Some(default_mapping) = mappings.iter().find(|mapping| mapping.kind == "default") {
+        normalized[0].label = if default_mapping.label.trim().is_empty() {
+            default_mapping_label()
+        } else {
+            default_mapping.label.trim().to_string()
+        };
+        normalized[0].prompt = default_mapping.prompt.clone();
+    }
+
+    normalized.extend(
+        mappings
+            .iter()
+            .filter(|mapping| mapping.kind == "custom")
+            .enumerate()
+            .map(|(index, mapping)| PromptMapping {
+                id: if mapping.id.trim().is_empty() {
+                    format!("custom-{}", index + 1)
+                } else {
+                    mapping.id.trim().to_string()
+                },
+                label: if mapping.label.trim().is_empty() {
+                    format!("Custom prompt {}", index + 1)
+                } else {
+                    mapping.label.trim().to_string()
+                },
+                hotkey: mapping.hotkey.trim().to_string(),
+                prompt: mapping.prompt.clone(),
+                kind: "custom".to_string(),
+            }),
+    );
+
+    normalized
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

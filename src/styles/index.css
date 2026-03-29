@@ -5,6 +5,7 @@
 @import "../components/history/HistoryView.css";
 @import "../components/dictionary/DictionaryView.css";
 @import "../components/dictionary/DictionaryDialog.css";
+@import "../components/prompts/PromptMappingsView.css";
 @import "../components/settings/SettingsView.css";
 @import "../components/inputs/HotkeyRecorder.css";
 @import "../components/onboarding/OnboardingView.css";

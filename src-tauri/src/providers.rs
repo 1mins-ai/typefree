@@ -14,7 +14,12 @@ pub trait AsrProvider {
 }
 
 pub trait LlmPostProcessor {
-    async fn cleanup(&self, transcript: &str, settings: &AppSettings) -> Result<String, String>;
+    async fn cleanup(
+        &self,
+        transcript: &str,
+        settings: &AppSettings,
+        prompt_override: Option<&str>,
+    ) -> Result<String, String>;
 }
 
 pub struct GoogleSpeechProvider {
@@ -271,27 +276,34 @@ fn sanitize_cleanup_output(raw: &str, fallback: &str) -> String {
 pub async fn cleanup_transcript(
     transcript: &str,
     settings: &AppSettings,
+    prompt_override: Option<&str>,
+    force_cleanup: bool,
 ) -> Result<String, String> {
-    if !settings.cleanup_enabled {
+    if !settings.cleanup_enabled && !force_cleanup {
         return Ok(transcript.to_string());
     }
 
     match settings.llm_provider.trim() {
         "ollama" => {
             OllamaCleanupProvider::new()
-                .cleanup(transcript, settings)
+                .cleanup(transcript, settings, prompt_override)
                 .await
         }
         _ => {
             OpenRouterCleanupProvider::new()
-                .cleanup(transcript, settings)
+                .cleanup(transcript, settings, prompt_override)
                 .await
         }
     }
 }
 
 impl LlmPostProcessor for OpenRouterCleanupProvider {
-    async fn cleanup(&self, transcript: &str, settings: &AppSettings) -> Result<String, String> {
+    async fn cleanup(
+        &self,
+        transcript: &str,
+        settings: &AppSettings,
+        prompt_override: Option<&str>,
+    ) -> Result<String, String> {
         if settings.openrouter_api_key.trim().is_empty() {
             return Err("Missing OpenRouter API key.".to_string());
         }
@@ -300,10 +312,23 @@ impl LlmPostProcessor for OpenRouterCleanupProvider {
             return Err("Missing OpenRouter model.".to_string());
         }
 
-        let prompt = format!(
-            "You are cleaning a speech-to-text transcript. Keep the original language. Do not translate. Only lightly improve punctuation, spacing, filler words, and duplicate fragments. Preserve intent and wording as much as possible. Do not include reasoning, analysis, chain-of-thought, hidden thinking, or any explanation. Return only the final cleaned transcript text.\n\nTranscript:\n{}",
-            transcript
-        );
+        let prompt = if let Some(custom_prompt) = prompt_override.filter(|prompt| !prompt.trim().is_empty()) {
+            format!(
+                "You are transforming a speech-to-text transcript according to the user's instruction. Follow the instruction exactly. Return only the final user-facing text. Do not include reasoning, analysis, chain-of-thought, hidden thinking, or any explanation.\n\nInstruction:\n{}\n\nTranscript:\n{}",
+                custom_prompt.trim(),
+                transcript
+            )
+        } else {
+            format!(
+                "You are cleaning a speech-to-text transcript. Keep the original language. Do not translate. Only lightly improve punctuation, spacing, filler words, and duplicate fragments. Preserve intent and wording as much as possible. Do not include reasoning, analysis, chain-of-thought, hidden thinking, or any explanation. Return only the final cleaned transcript text.\n\nTranscript:\n{}",
+                transcript
+            )
+        };
+        let system_prompt = if prompt_override.is_some() {
+            "Return only the final text requested by the instruction. Never include reasoning, analysis, or thinking traces."
+        } else {
+            "Return only the cleaned transcript text. Never include reasoning, analysis, or thinking traces."
+        };
 
         let response = self
             .client
@@ -323,7 +348,7 @@ impl LlmPostProcessor for OpenRouterCleanupProvider {
                 "messages": [
                     {
                         "role": "system",
-                        "content": "Return only the cleaned transcript text. Never include reasoning, analysis, or thinking traces."
+                        "content": system_prompt
                     },
                     {
                         "role": "user",
@@ -361,7 +386,12 @@ impl LlmPostProcessor for OpenRouterCleanupProvider {
 }
 
 impl LlmPostProcessor for OllamaCleanupProvider {
-    async fn cleanup(&self, transcript: &str, settings: &AppSettings) -> Result<String, String> {
+    async fn cleanup(
+        &self,
+        transcript: &str,
+        settings: &AppSettings,
+        prompt_override: Option<&str>,
+    ) -> Result<String, String> {
         if settings.ollama_base_url.trim().is_empty() {
             return Err("Missing Ollama base URL.".to_string());
         }
@@ -370,10 +400,23 @@ impl LlmPostProcessor for OllamaCleanupProvider {
             return Err("Missing Ollama model.".to_string());
         }
 
-        let prompt = format!(
-            "You are cleaning a speech-to-text transcript. Keep the original language. Do not translate. Only lightly improve punctuation, spacing, filler words, and duplicate fragments. Preserve intent and wording as much as possible. Do not include reasoning, analysis, chain-of-thought, hidden thinking, or any explanation. Return only the final cleaned transcript text.\n\nTranscript:\n{}",
-            transcript
-        );
+        let prompt = if let Some(custom_prompt) = prompt_override.filter(|prompt| !prompt.trim().is_empty()) {
+            format!(
+                "You are transforming a speech-to-text transcript according to the user's instruction. Follow the instruction exactly. Return only the final user-facing text. Do not include reasoning, analysis, chain-of-thought, hidden thinking, or any explanation.\n\nInstruction:\n{}\n\nTranscript:\n{}",
+                custom_prompt.trim(),
+                transcript
+            )
+        } else {
+            format!(
+                "You are cleaning a speech-to-text transcript. Keep the original language. Do not translate. Only lightly improve punctuation, spacing, filler words, and duplicate fragments. Preserve intent and wording as much as possible. Do not include reasoning, analysis, chain-of-thought, hidden thinking, or any explanation. Return only the final cleaned transcript text.\n\nTranscript:\n{}",
+                transcript
+            )
+        };
+        let system_prompt = if prompt_override.is_some() {
+            "Return only the final text requested by the instruction. Never include reasoning, analysis, or thinking traces."
+        } else {
+            "Return only the cleaned transcript text. Never include reasoning, analysis, or thinking traces."
+        };
 
         let base_url = settings.ollama_base_url.trim_end_matches('/');
         let response = self
@@ -385,7 +428,7 @@ impl LlmPostProcessor for OllamaCleanupProvider {
                 "messages": [
                     {
                         "role": "system",
-                        "content": "Return only the cleaned transcript text. Never include reasoning, analysis, or thinking traces."
+                        "content": system_prompt
                     },
                     {
                         "role": "user",

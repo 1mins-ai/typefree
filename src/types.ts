@@ -10,6 +10,15 @@ export type SessionStatus =
 export type LlmProvider = "openrouter" | "ollama";
 export type SpeechProvider = "google";
 export type HistoryRetention = "day" | "week" | "month" | "forever";
+export type PromptMappingKind = "default" | "custom";
+
+export interface PromptMapping {
+  id: string;
+  label: string;
+  hotkey: string;
+  prompt: string;
+  kind: PromptMappingKind;
+}
 
 export interface AppSettings {
   speechProvider: SpeechProvider;
@@ -25,6 +34,7 @@ export interface AppSettings {
   cleanupEnabled: boolean;
   historyRetention: HistoryRetention;
   hasCompletedOnboarding: boolean;
+  promptMappings: PromptMapping[];
 }
 
 export interface HistoryEntry {
@@ -44,6 +54,8 @@ export interface DictationResult {
 export interface HotkeyStatePayload {
   state: "pressed" | "released";
   shortcut: string;
+  mappingId: string;
+  mappingKind: PromptMappingKind;
 }
 
 export interface SessionStatusPayload {

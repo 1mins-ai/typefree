@@ -31,11 +31,7 @@ fn main() {
                 use tauri_plugin_global_shortcut::Builder;
 
                 app.handle().plugin(Builder::new().build())?;
-                commands::register_or_replace_shortcut(
-                    &handle,
-                    "",
-                    &initial_settings.global_hotkey,
-                )?;
+                commands::register_or_replace_shortcuts(&handle, None, &initial_settings)?;
             }
 
             create_overlay_window(app)?;

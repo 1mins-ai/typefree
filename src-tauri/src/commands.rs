@@ -1,9 +1,11 @@
+use std::collections::HashSet;
+
 use tauri::{AppHandle, Emitter, Manager, Runtime, State};
 
 use crate::{
     app_state::{AppState, new_history_entry, save_history_to_disk, save_settings_to_disk},
     providers::{cleanup_transcript, transcribe_audio},
-    settings::{AppSettings, DictationResult, HistoryEntry, OverlayState},
+    settings::{AppSettings, DictationResult, HistoryEntry, OverlayState, PromptMapping},
     text_injector::{ClipboardPasteInjector, TextInjector},
 };
 
@@ -20,13 +22,9 @@ pub fn save_settings<R: Runtime>(
     state: State<'_, AppState>,
     settings: AppSettings,
 ) -> Result<AppSettings, String> {
-    let next_shortcut = settings.global_hotkey.trim();
-    if next_shortcut.is_empty() {
-        return Err("Global hotkey cannot be empty.".to_string());
-    }
-
+    let settings = settings.normalized();
     let previous_settings = state.settings();
-    register_or_replace_shortcut(&app, &previous_settings.global_hotkey, next_shortcut)?;
+    register_or_replace_shortcuts(&app, Some(&previous_settings), &settings)?;
     save_settings_to_disk(&app, &settings)
         .map_err(|error| format!("Failed to save settings to disk: {error}"))?;
     let history = state.history();
@@ -127,19 +125,36 @@ pub async fn process_dictation<R: Runtime>(
     audio_base64: String,
     mime_type: String,
     settings: AppSettings,
+    mapping_kind: Option<String>,
+    mapping_prompt: Option<String>,
 ) -> Result<DictationResult, String> {
     let settings = merge_runtime_settings(&state.settings(), settings);
     let injector = ClipboardPasteInjector::new();
+    let custom_prompt = mapping_prompt
+        .as_deref()
+        .map(str::trim)
+        .filter(|prompt| !prompt.is_empty());
+    let uses_custom_prompt = matches!(mapping_kind.as_deref(), Some("custom"));
 
     set_session_status(&app, &state, "transcribing", 0.0);
     let transcript = transcribe_audio(&audio_base64, &mime_type, &settings).await?;
 
-    if settings.cleanup_enabled {
+    if uses_custom_prompt && custom_prompt.is_none() {
+        return Err("This prompt shortcut does not have a prompt yet.".to_string());
+    }
+
+    if settings.cleanup_enabled || uses_custom_prompt {
         set_session_status(&app, &state, "cleaning", 0.0);
     } else {
         set_session_status(&app, &state, "inserting", 0.0);
     }
-    let cleaned_text = cleanup_transcript(&transcript, &settings).await?;
+    let cleaned_text = cleanup_transcript(
+        &transcript,
+        &settings,
+        custom_prompt,
+        uses_custom_prompt,
+    )
+    .await?;
 
     set_session_status(&app, &state, "inserting", 0.0);
     injector.insert(&cleaned_text)?;
@@ -213,37 +228,70 @@ fn merge_runtime_settings(stored: &AppSettings, incoming: AppSettings) -> AppSet
             incoming.history_retention
         },
         has_completed_onboarding: incoming.has_completed_onboarding,
+        prompt_mappings: if incoming.prompt_mappings.is_empty() {
+            stored.prompt_mappings.clone()
+        } else {
+            incoming.prompt_mappings
+        },
     }
+    .normalized()
 }
 
-pub fn register_or_replace_shortcut<R: Runtime>(
+pub fn register_or_replace_shortcuts<R: Runtime>(
     app: &AppHandle<R>,
-    previous_shortcut: &str,
-    next_shortcut: &str,
+    previous_settings: Option<&AppSettings>,
+    next_settings: &AppSettings,
 ) -> Result<(), String> {
     #[cfg(not(any(target_os = "android", target_os = "ios")))]
     {
         use tauri_plugin_global_shortcut::{GlobalShortcutExt, ShortcutState};
 
-        let previous_shortcut = previous_shortcut.trim();
-        let next_shortcut = next_shortcut.trim();
+        let previous_mappings = previous_settings
+            .map(active_prompt_mappings)
+            .unwrap_or_default();
+        let next_mappings = active_prompt_mappings(next_settings);
+        let mut seen = HashSet::new();
 
-        if previous_shortcut == next_shortcut {
-            return Ok(());
+        for mapping in &next_mappings {
+            let hotkey = mapping.hotkey.trim();
+
+            if hotkey.is_empty() {
+                return if mapping.kind == "default" {
+                    Err("Default dictation hotkey cannot be empty.".to_string())
+                } else {
+                    Err("Custom prompt hotkeys cannot be empty.".to_string())
+                };
+            }
+
+            if !seen.insert(hotkey.to_ascii_lowercase()) {
+                return Err(format!(
+                    "Global hotkey '{hotkey}' is duplicated. Pick another shortcut."
+                ));
+            }
         }
 
-        if !previous_shortcut.is_empty() && previous_shortcut != next_shortcut {
-            let _ = app.global_shortcut().unregister(previous_shortcut);
+        for mapping in previous_mappings {
+            let hotkey = mapping.hotkey.trim();
+            if !hotkey.is_empty() {
+                let _ = app.global_shortcut().unregister(hotkey);
+            }
         }
 
-        if app.global_shortcut().is_registered(next_shortcut) {
-            return Err(format!(
-                "Global hotkey '{next_shortcut}' is already registered. Pick another shortcut."
-            ));
-        }
+        for mapping in next_mappings {
+            let hotkey = mapping.hotkey.trim().to_string();
+            let shortcut = hotkey.as_str();
 
-        app.global_shortcut()
-            .on_shortcut(next_shortcut, move |handle, shortcut, event| {
+            if app.global_shortcut().is_registered(shortcut) {
+                return Err(format!(
+                    "Global hotkey '{hotkey}' is already registered. Pick another shortcut."
+                ));
+            }
+
+            let mapping_id = mapping.id.clone();
+            let mapping_kind = mapping.kind.clone();
+
+            app.global_shortcut()
+            .on_shortcut(shortcut, move |handle, shortcut, event| {
                 let state = match event.state() {
                     ShortcutState::Pressed => "pressed",
                     ShortcutState::Released => "released",
@@ -253,16 +301,29 @@ pub fn register_or_replace_shortcut<R: Runtime>(
                     "dictation-hotkey-state",
                     serde_json::json!({
                         "state": state,
-                        "shortcut": shortcut.to_string()
+                        "shortcut": shortcut.to_string(),
+                        "mappingId": mapping_id,
+                        "mappingKind": mapping_kind
                     }),
                 );
             })
             .map_err(|error| {
-                format!("Failed to register global hotkey '{next_shortcut}': {error}")
+                format!("Failed to register global hotkey '{hotkey}': {error}")
             })?;
+        }
     }
 
     Ok(())
+}
+
+fn active_prompt_mappings(settings: &AppSettings) -> Vec<PromptMapping> {
+    settings
+        .clone()
+        .normalized()
+        .prompt_mappings
+        .into_iter()
+        .filter(|mapping| !mapping.hotkey.trim().is_empty())
+        .collect()
 }
 
 pub fn set_session_status<R: Runtime>(

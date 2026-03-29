@@ -7,6 +7,7 @@
     "home": "Home",
     "history": "History",
     "dictionary": "Dictionary",
+    "prompts": "Prompts",
     "setting": "Setting"
   },
   "status": {
@@ -18,7 +19,9 @@
     "error": "Attention needed"
   },
   "overlay": {
-    "thinking": "thinking"
+    "thinking": "thinking",
+    "cancel": "Cancel recording",
+    "finish": "Finish recording"
   },
   "sidebar": {
     "availableAnywhere": "Available anywhere",
@@ -121,6 +124,35 @@
     "editAriaLabel": "Edit {{word}}",
     "duplicateError": "This word is already in your dictionary.",
     "requiredError": "Enter a word or phrase first."
+  },
+  "promptPage": {
+    "eyebrow": "Prompt shortcuts",
+    "title": "Map global hotkeys to custom prompt outputs",
+    "copy": "Edit the default mapping or add more prompt shortcuts to turn the same transcript into different kinds of output.",
+    "addMapping": "Add mapping",
+    "defaultTitle": "Default dictation shortcut",
+    "defaultBadge": "Default",
+    "defaultCopy": "This reserved mapping mirrors the app's main hotkey. Leave its prompt empty to keep normal dictation, or fill it in to override the default cleanup prompt.",
+    "customTitleFallback": "Custom prompt",
+    "customBadge": "Custom",
+    "customCopy": "Hold this shortcut to record, release to stop, then send the transcript through this prompt.",
+    "labelLabel": "Label",
+    "defaultLabelPlaceholder": "Default dictation",
+    "customLabelPlaceholder": "e.g. Formal email",
+    "hotkeyLabel": "Hotkey",
+    "promptLabel": "Prompt instruction",
+    "defaultPromptPlaceholder": "Leave blank to keep normal dictation, or enter a prompt to override the default cleanup behavior.",
+    "promptPlaceholder": "e.g. Rewrite this transcript into a formal email with a clear subject line and a polite closing.",
+    "deleteMapping": "Delete mapping",
+    "emptyTitle": "No custom prompt mappings yet",
+    "emptyCopy": "Add your first custom shortcut to turn the same spoken transcript into a different kind of output.",
+    "validation": {
+      "labelRequired": "Every prompt mapping needs a label.",
+      "defaultHotkeyRequired": "The default dictation hotkey cannot be empty.",
+      "hotkeyRequired": "Every custom prompt mapping needs a hotkey.",
+      "promptRequired": "Every custom prompt mapping needs a prompt.",
+      "duplicateHotkey": "The hotkey {{hotkey}} is used more than once."
+    }
   },
   "settingPage": {
     "title": "Settings",

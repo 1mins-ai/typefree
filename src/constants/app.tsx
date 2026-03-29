@@ -4,11 +4,20 @@ import type {
   HistoryRetention,
   LlmProvider,
   OverlayState,
+  PromptMapping,
   SpeechProvider,
 } from "../types";
 
-export type AppView = "home" | "history" | "dictionary" | "setting";
+export type AppView = "home" | "history" | "dictionary" | "prompts" | "setting";
 export type UiLanguage = "zh-TW" | "en" | "ja" | "ko";
+
+export const defaultPromptMapping: PromptMapping = {
+  id: "default",
+  label: "Default dictation",
+  hotkey: "Ctrl+`",
+  prompt: "",
+  kind: "default",
+};
 
 export const defaultSettings: AppSettings = {
   speechProvider: "google",
@@ -24,6 +33,7 @@ export const defaultSettings: AppSettings = {
   cleanupEnabled: true,
   historyRetention: "forever",
   hasCompletedOnboarding: false,
+  promptMappings: [defaultPromptMapping],
 };
 
 export const defaultOverlayState: OverlayState = {
@@ -94,6 +104,18 @@ export const sidebarNavItems: Array<{ id: AppView; labelKey: string; icon: React
         <path d="M6 5.5V21" />
         <path d="M10 7h6" />
         <path d="M10 11h6" />
+      </svg>
+    ),
+  },
+  {
+    id: "prompts",
+    labelKey: "nav.prompts",
+    icon: (
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M4 6.5h16" />
+        <path d="M4 12h16" />
+        <path d="M4 17.5h10" />
+        <path d="M17.5 15.5 20 18l-2.5 2.5" />
       </svg>
     ),
   },

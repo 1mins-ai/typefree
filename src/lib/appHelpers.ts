@@ -1,7 +1,7 @@
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import type { TFunction } from "i18next";
-import { historyRetentionOptions, languageOptions, speechProviderOptions } from "../constants/app";
-import type { AppSettings, HistoryEntry, SessionStatus } from "../types";
+import { defaultPromptMapping, historyRetentionOptions, languageOptions, speechProviderOptions } from "../constants/app";
+import type { AppSettings, HistoryEntry, PromptMapping, SessionStatus } from "../types";
 
 export function toBase64(bytes: ArrayLike<number>) {
   let binary = "";
@@ -76,6 +76,72 @@ export function parsePhraseHints(input: string) {
 
 export function serializePhraseHints(words: string[]) {
   return words.join("\n");
+}
+
+export function createCustomPromptMapping(): PromptMapping {
+  return {
+    id: globalThis.crypto?.randomUUID?.() ?? `custom-${Date.now()}-${Math.round(Math.random() * 1_000_000)}`,
+    label: "",
+    hotkey: "",
+    prompt: "",
+    kind: "custom",
+  };
+}
+
+export function normalizePromptMappings(settings: AppSettings) {
+  const existingDefault = settings.promptMappings.find((mapping) => mapping.kind === "default");
+  const defaultHotkey = existingDefault?.hotkey.trim() || settings.globalHotkey.trim() || defaultPromptMapping.hotkey;
+
+  return [
+    {
+      id: existingDefault?.id || defaultPromptMapping.id,
+      label: existingDefault?.label ?? defaultPromptMapping.label,
+      hotkey: defaultHotkey,
+      prompt: existingDefault?.prompt || "",
+      kind: "default" as const,
+    },
+    ...settings.promptMappings
+      .filter((mapping) => mapping.kind === "custom")
+      .map((mapping, index) => ({
+        id: mapping.id || `custom-${index + 1}`,
+        label: mapping.label ?? "",
+        hotkey: mapping.hotkey,
+        prompt: mapping.prompt,
+        kind: "custom" as const,
+      })),
+  ];
+}
+
+export function validatePromptMappings(settings: AppSettings, t: TFunction) {
+  const mappings = normalizePromptMappings(settings);
+  const used = new Set<string>();
+
+  for (const mapping of mappings) {
+    const label = mapping.label.trim();
+    const hotkey = mapping.hotkey.trim();
+
+    if (!label) {
+      return t("promptPage.validation.labelRequired");
+    }
+
+    if (!hotkey) {
+      return mapping.kind === "default"
+        ? t("promptPage.validation.defaultHotkeyRequired")
+        : t("promptPage.validation.hotkeyRequired");
+    }
+
+    const normalizedHotkey = hotkey.toLowerCase();
+    if (used.has(normalizedHotkey)) {
+      return t("promptPage.validation.duplicateHotkey", { hotkey });
+    }
+    used.add(normalizedHotkey);
+
+    if (mapping.kind === "custom" && !mapping.prompt.trim()) {
+      return t("promptPage.validation.promptRequired");
+    }
+  }
+
+  return "";
 }
 
 export function keyToTauriToken(key: string, code: string) {
