@@ -379,6 +379,8 @@ impl LlmPostProcessor for OpenRouterCleanupProvider {
                 "model": settings.openrouter_model,
                 "temperature": 0.1,
                 "reasoning": {
+                    "effort": "none",
+                    "enabled": false,
                     "exclude": true
                 },
                 "messages": [

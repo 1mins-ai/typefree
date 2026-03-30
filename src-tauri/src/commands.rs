@@ -142,6 +142,8 @@ pub async fn process_dictation<R: Runtime>(
         .filter(|mode| !mode.is_empty())
         .unwrap_or("dictation");
     let is_ask_command = resolved_mapping_mode == "ask_command";
+    let is_default_dictation =
+        matches!(mapping_kind.as_deref(), Some("default")) && !is_ask_command;
 
     set_session_status(&app, &state, "transcribing", 0.0);
     let transcript = transcribe_audio(&audio_base64, &mime_type, &settings).await?;
@@ -166,7 +168,13 @@ pub async fn process_dictation<R: Runtime>(
         String::new()
     };
 
-    let should_cleanup = settings.cleanup_enabled || custom_prompt.is_some() || is_ask_command;
+    let should_cleanup = if is_ask_command {
+        true
+    } else if is_default_dictation {
+        settings.cleanup_enabled
+    } else {
+        settings.cleanup_enabled || custom_prompt.is_some()
+    };
     if should_cleanup {
         set_session_status(&app, &state, "cleaning", 0.0);
     } else {

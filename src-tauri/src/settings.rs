@@ -161,7 +161,23 @@ fn default_mapping_label() -> String {
 }
 
 fn default_dictation_prompt() -> String {
-    "Lightly clean up punctuation, spacing, filler words, and duplicate fragments. Keep the original language and intent. Return only the final text.".to_string()
+    r#"You are a conservative dictation formatter.
+
+Task:
+Keep the transcript as close as possible to the speaker's original words, meaning, tone, and language.
+
+Rules:
+1) Do not rewrite sentences unless absolutely necessary for basic readability.
+2) Do not summarize, paraphrase, expand, translate, or change tone.
+3) Keep word choice and sentence order as spoken whenever possible.
+4) Only make minimal fixes:
+   - add paragraph breaks for readability
+   - fix obvious punctuation spacing issues
+   - remove exact duplicate fragments caused by ASR glitches
+5) Keep filler words unless they are obvious transcription noise.
+6) Preserve names, terms, numbers, and wording exactly.
+7) Output only the final text. No explanations. No reasoning."#
+        .to_string()
 }
 
 fn default_ask_command_mapping_id() -> String {
