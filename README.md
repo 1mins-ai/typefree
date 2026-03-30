@@ -43,6 +43,8 @@ English:
 - Start and stop dictation with a global shortcut
 - Use Google Speech-to-Text for speech transcription
 - Use OpenRouter or Ollama for transcript cleanup
+- Include two built-in prompt mappings: `Default Dictation` and `Ask Command`
+- Keep built-in mapping labels locked (non-editable) while custom mapping labels remain editable
 - Run in the system tray and show or hide the main window
 - Show overlay status feedback for states like listening, transcribing, and cleaning
 - Support launch on startup
@@ -54,6 +56,14 @@ English:
 繁體中文：TypeFree 支援將不同快捷鍵對應到不同 Prompt。你可以為每一條 mapping 自訂名稱、快捷鍵同 Prompt 指令，例如一條用來生成正式 Email，另一條用來整理成 social media post。錄音流程仍然係 hold-to-talk，但放手之後會按返對應 Prompt 輸出唔同內容。
 
 English: TypeFree supports mapping different hotkeys to different prompts. You can give each mapping its own label, shortcut, and prompt instruction, for example one for writing a formal email and another for turning the same transcript into a social media post. The recording flow stays hold-to-talk, but the final output changes based on the selected prompt.
+
+### Ask Command Mode / Ask Command 模式
+
+English: TypeFree includes a built-in `Ask Command` mapping (default hotkey: `Ctrl+Space`) for instruction-style voice commands.
+
+- If text is highlighted in the active app, the highlighted text is captured as context and your spoken command is applied to that selection (for example: "translate this to Chinese").
+- If nothing is highlighted, the spoken command is treated as a direct question/request and the app returns an answer directly.
+- `Default Dictation` and `Ask Command` are system defaults with locked labels; only custom mappings can rename their labels.
 
 ![Custom prompt mapping](./docs/selfdefinedprompt.png)
 
