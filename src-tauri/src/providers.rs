@@ -19,6 +19,8 @@ pub trait LlmPostProcessor {
         transcript: &str,
         settings: &AppSettings,
         prompt_override: Option<&str>,
+        ask_mode: bool,
+        selected_context: Option<&str>,
     ) -> Result<String, String>;
 }
 
@@ -278,6 +280,8 @@ pub async fn cleanup_transcript(
     settings: &AppSettings,
     prompt_override: Option<&str>,
     force_cleanup: bool,
+    ask_mode: bool,
+    selected_context: Option<&str>,
 ) -> Result<String, String> {
     if !settings.cleanup_enabled && !force_cleanup {
         return Ok(transcript.to_string());
@@ -286,12 +290,24 @@ pub async fn cleanup_transcript(
     match settings.llm_provider.trim() {
         "ollama" => {
             OllamaCleanupProvider::new()
-                .cleanup(transcript, settings, prompt_override)
+                .cleanup(
+                    transcript,
+                    settings,
+                    prompt_override,
+                    ask_mode,
+                    selected_context,
+                )
                 .await
         }
         _ => {
             OpenRouterCleanupProvider::new()
-                .cleanup(transcript, settings, prompt_override)
+                .cleanup(
+                    transcript,
+                    settings,
+                    prompt_override,
+                    ask_mode,
+                    selected_context,
+                )
                 .await
         }
     }
@@ -303,6 +319,8 @@ impl LlmPostProcessor for OpenRouterCleanupProvider {
         transcript: &str,
         settings: &AppSettings,
         prompt_override: Option<&str>,
+        ask_mode: bool,
+        selected_context: Option<&str>,
     ) -> Result<String, String> {
         if settings.openrouter_api_key.trim().is_empty() {
             return Err("Missing OpenRouter API key.".to_string());
@@ -312,7 +330,25 @@ impl LlmPostProcessor for OpenRouterCleanupProvider {
             return Err("Missing OpenRouter model.".to_string());
         }
 
-        let prompt = if let Some(custom_prompt) = prompt_override.filter(|prompt| !prompt.trim().is_empty()) {
+        let prompt = if ask_mode {
+            if let Some(selected_context) = selected_context {
+                let command_template = prompt_override
+                    .map(str::trim)
+                    .filter(|prompt| !prompt.is_empty())
+                    .unwrap_or("Apply the spoken instruction to the provided selected text context. Return only the final text.");
+                format!(
+                    "You are applying spoken editing instructions to selected text context. Do not think step by step. Do not include reasoning.\n\nTemplate:\n{}\n\nInstruction (spoken transcript):\n{}\n\nSelected text context:\n{}\n\nReturn only the final output text.",
+                    command_template, transcript, selected_context
+                )
+            } else {
+                format!(
+                    "You are an assistant answering a spoken request. Treat the following transcript as the full user instruction or question. Do not think step by step. Do not include reasoning.\n\nSpoken request:\n{}\n\nRespond directly and concisely. Return only the final answer text.",
+                    transcript
+                )
+            }
+        } else if let Some(custom_prompt) =
+            prompt_override.filter(|prompt| !prompt.trim().is_empty())
+        {
             format!(
                 "You are transforming a speech-to-text transcript according to the user's instruction. Follow the instruction exactly. Return only the final user-facing text. Do not include reasoning, analysis, chain-of-thought, hidden thinking, or any explanation.\n\nInstruction:\n{}\n\nTranscript:\n{}",
                 custom_prompt.trim(),
@@ -324,10 +360,10 @@ impl LlmPostProcessor for OpenRouterCleanupProvider {
                 transcript
             )
         };
-        let system_prompt = if prompt_override.is_some() {
-            "Return only the final text requested by the instruction. Never include reasoning, analysis, or thinking traces."
+        let system_prompt = if ask_mode || selected_context.is_some() || prompt_override.is_some() {
+            "Return only the final text requested by the instruction. Keep it concise. Never include reasoning, analysis, or thinking traces."
         } else {
-            "Return only the cleaned transcript text. Never include reasoning, analysis, or thinking traces."
+            "Return only the cleaned transcript text. Keep it concise. Never include reasoning, analysis, or thinking traces."
         };
 
         let response = self
@@ -391,6 +427,8 @@ impl LlmPostProcessor for OllamaCleanupProvider {
         transcript: &str,
         settings: &AppSettings,
         prompt_override: Option<&str>,
+        ask_mode: bool,
+        selected_context: Option<&str>,
     ) -> Result<String, String> {
         if settings.ollama_base_url.trim().is_empty() {
             return Err("Missing Ollama base URL.".to_string());
@@ -400,7 +438,25 @@ impl LlmPostProcessor for OllamaCleanupProvider {
             return Err("Missing Ollama model.".to_string());
         }
 
-        let prompt = if let Some(custom_prompt) = prompt_override.filter(|prompt| !prompt.trim().is_empty()) {
+        let prompt = if ask_mode {
+            if let Some(selected_context) = selected_context {
+                let command_template = prompt_override
+                    .map(str::trim)
+                    .filter(|prompt| !prompt.is_empty())
+                    .unwrap_or("Apply the spoken instruction to the provided selected text context. Return only the final text.");
+                format!(
+                    "You are applying spoken editing instructions to selected text context. Do not think step by step. Do not include reasoning.\n\nTemplate:\n{}\n\nInstruction (spoken transcript):\n{}\n\nSelected text context:\n{}\n\nReturn only the final output text.",
+                    command_template, transcript, selected_context
+                )
+            } else {
+                format!(
+                    "You are an assistant answering a spoken request. Treat the following transcript as the full user instruction or question. Do not think step by step. Do not include reasoning.\n\nSpoken request:\n{}\n\nRespond directly and concisely. Return only the final answer text.",
+                    transcript
+                )
+            }
+        } else if let Some(custom_prompt) =
+            prompt_override.filter(|prompt| !prompt.trim().is_empty())
+        {
             format!(
                 "You are transforming a speech-to-text transcript according to the user's instruction. Follow the instruction exactly. Return only the final user-facing text. Do not include reasoning, analysis, chain-of-thought, hidden thinking, or any explanation.\n\nInstruction:\n{}\n\nTranscript:\n{}",
                 custom_prompt.trim(),
@@ -412,10 +468,10 @@ impl LlmPostProcessor for OllamaCleanupProvider {
                 transcript
             )
         };
-        let system_prompt = if prompt_override.is_some() {
-            "Return only the final text requested by the instruction. Never include reasoning, analysis, or thinking traces."
+        let system_prompt = if ask_mode || selected_context.is_some() || prompt_override.is_some() {
+            "Return only the final text requested by the instruction. Keep it concise. Never include reasoning, analysis, or thinking traces."
         } else {
-            "Return only the cleaned transcript text. Never include reasoning, analysis, or thinking traces."
+            "Return only the cleaned transcript text. Keep it concise. Never include reasoning, analysis, or thinking traces."
         };
 
         let base_url = settings.ollama_base_url.trim_end_matches('/');

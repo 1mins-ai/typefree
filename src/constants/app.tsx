@@ -11,12 +11,28 @@ import type {
 export type AppView = "home" | "history" | "dictionary" | "prompts" | "setting";
 export type UiLanguage = "zh-TW" | "en" | "ja" | "ko";
 
+export const defaultDictationPrompt =
+  "Lightly clean up punctuation, spacing, filler words, and duplicate fragments. Keep the original language and intent. Return only the final text.";
+
+export const defaultAskCommandPrompt =
+  "Apply the spoken instruction to the provided selected text context. If context is empty, execute the instruction directly and return only the final text.";
+
 export const defaultPromptMapping: PromptMapping = {
   id: "default",
-  label: "Default dictation",
+  label: "Default Dictation",
   hotkey: "Ctrl+`",
-  prompt: "",
+  prompt: defaultDictationPrompt,
   kind: "default",
+  mode: "dictation",
+};
+
+export const defaultAskCommandMapping: PromptMapping = {
+  id: "ask-command",
+  label: "Ask Command",
+  hotkey: "Ctrl+Space",
+  prompt: defaultAskCommandPrompt,
+  kind: "custom",
+  mode: "ask_command",
 };
 
 export const defaultSettings: AppSettings = {
@@ -33,7 +49,7 @@ export const defaultSettings: AppSettings = {
   cleanupEnabled: true,
   historyRetention: "forever",
   hasCompletedOnboarding: false,
-  promptMappings: [defaultPromptMapping],
+  promptMappings: [defaultPromptMapping, defaultAskCommandMapping],
 };
 
 export const defaultOverlayState: OverlayState = {

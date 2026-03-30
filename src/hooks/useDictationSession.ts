@@ -53,7 +53,7 @@ export function useDictationSession({
   const startSoundRef = useRef<HTMLAudioElement | null>(null);
   const stopSoundRef = useRef<HTMLAudioElement | null>(null);
   const recordingStartedAtRef = useRef<number | null>(null);
-  const activeMappingRef = useRef<Pick<PromptMapping, "id" | "kind"> | null>(null);
+  const activeMappingRef = useRef<Pick<PromptMapping, "id" | "kind" | "mode"> | null>(null);
 
   useEffect(() => {
     statusRef.current = status;
@@ -236,6 +236,7 @@ export function useDictationSession({
       activeMappingRef.current = {
         id: payload.mappingId,
         kind: payload.mappingKind,
+        mode: payload.mappingMode,
       };
       setStatus("listening");
       playCue(startSoundRef.current, "start");
@@ -320,6 +321,7 @@ export function useDictationSession({
         mimeType,
         settings: currentSettings,
         mappingKind: activeMapping?.kind,
+        mappingMode: activeMapping?.mode,
         mappingPrompt: selectedMapping?.prompt,
       });
 

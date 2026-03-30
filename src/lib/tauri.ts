@@ -71,7 +71,9 @@ export async function processDictation(payload: {
   mimeType: string;
   settings: AppSettings;
   mappingKind?: "default" | "custom";
+  mappingMode?: "dictation" | "ask_command";
   mappingPrompt?: string;
+  selectedContext?: string;
 }) {
   return runCommand<DictationResult>("process_dictation", payload);
 }

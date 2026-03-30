@@ -1,6 +1,12 @@
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import type { TFunction } from "i18next";
-import { defaultPromptMapping, historyRetentionOptions, languageOptions, speechProviderOptions } from "../constants/app";
+import {
+  defaultAskCommandMapping,
+  defaultPromptMapping,
+  historyRetentionOptions,
+  languageOptions,
+  speechProviderOptions,
+} from "../constants/app";
 import type { AppSettings, HistoryEntry, PromptMapping, SessionStatus } from "../types";
 
 export function toBase64(bytes: ArrayLike<number>) {
@@ -85,30 +91,46 @@ export function createCustomPromptMapping(): PromptMapping {
     hotkey: "",
     prompt: "",
     kind: "custom",
+    mode: "dictation",
   };
 }
 
 export function normalizePromptMappings(settings: AppSettings) {
   const existingDefault = settings.promptMappings.find((mapping) => mapping.kind === "default");
+  const existingAsk = settings.promptMappings.find((mapping) => mapping.id === defaultAskCommandMapping.id);
   const defaultHotkey = existingDefault?.hotkey.trim() || settings.globalHotkey.trim() || defaultPromptMapping.hotkey;
+  const askHotkey = existingAsk?.hotkey.trim() || defaultAskCommandMapping.hotkey;
+  const askPrompt = existingAsk?.prompt || defaultAskCommandMapping.prompt;
+  const askMode = existingAsk?.mode === "ask_command" ? "ask_command" : defaultAskCommandMapping.mode;
+  const customMappings = settings.promptMappings
+    .filter((mapping) => mapping.kind === "custom" && mapping.id !== defaultAskCommandMapping.id)
+    .map((mapping, index) => ({
+      id: mapping.id || `custom-${index + 1}`,
+      label: mapping.label ?? "",
+      hotkey: mapping.hotkey,
+      prompt: mapping.prompt,
+      kind: "custom" as const,
+      mode: mapping.mode === "ask_command" ? "ask_command" as const : "dictation" as const,
+    }));
 
   return [
     {
       id: existingDefault?.id || defaultPromptMapping.id,
-      label: existingDefault?.label ?? defaultPromptMapping.label,
+      label: defaultPromptMapping.label,
       hotkey: defaultHotkey,
-      prompt: existingDefault?.prompt || "",
+      prompt: existingDefault?.prompt || defaultPromptMapping.prompt,
       kind: "default" as const,
+      mode: "dictation" as const,
     },
-    ...settings.promptMappings
-      .filter((mapping) => mapping.kind === "custom")
-      .map((mapping, index) => ({
-        id: mapping.id || `custom-${index + 1}`,
-        label: mapping.label ?? "",
-        hotkey: mapping.hotkey,
-        prompt: mapping.prompt,
-        kind: "custom" as const,
-      })),
+    {
+      id: defaultAskCommandMapping.id,
+      label: defaultAskCommandMapping.label,
+      hotkey: askHotkey,
+      prompt: askPrompt,
+      kind: "custom" as const,
+      mode: askMode,
+    },
+    ...customMappings,
   ];
 }
 

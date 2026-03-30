@@ -2,6 +2,7 @@ import { HotkeyRecorder } from "../inputs/HotkeyRecorder";
 import { createCustomPromptMapping, normalizePromptMappings } from "../../lib/appHelpers";
 import type { AppSettings, PromptMapping } from "../../types";
 import type { TFunction } from "i18next";
+import { defaultAskCommandMapping } from "../../constants/app";
 
 interface PromptMappingsViewProps {
   t: TFunction;
@@ -77,15 +78,9 @@ export function PromptMappingsView({
           <div className="prompt-card-top">
             <div>
               <div className="prompt-card-title-row">
-                <input
-                  className="prompt-title-input"
-                  value={defaultMapping.label}
-                  onChange={(event) => {
-                    updateMapping(defaultMapping.id, (mapping) => ({ ...mapping, label: event.target.value }));
-                  }}
-                  placeholder={t("promptPage.defaultLabelPlaceholder")}
-                  aria-label={t("promptPage.labelLabel")}
-                />
+                <p className="prompt-title-static" aria-label={t("promptPage.labelLabel")}>
+                  {defaultMapping.label}
+                </p>
                 <span className="prompt-kind-badge">{t("promptPage.defaultBadge")}</span>
               </div>
               <p className="prompt-card-copy">{t("promptPage.defaultCopy")}</p>
@@ -129,34 +124,44 @@ export function PromptMappingsView({
             <div className="prompt-card-top">
               <div>
                 <div className="prompt-card-title-row">
-                  <input
-                    className="prompt-title-input"
-                    value={mapping.label}
-                    onChange={(event) => {
-                      updateMapping(mapping.id, (current) => ({ ...current, label: event.target.value }));
-                    }}
-                    placeholder={t("promptPage.customLabelPlaceholder")}
-                    aria-label={t("promptPage.labelLabel")}
-                  />
-                  <span className="prompt-kind-badge is-custom">{t("promptPage.customBadge")}</span>
+                  {mapping.id === defaultAskCommandMapping.id ? (
+                    <p className="prompt-title-static" aria-label={t("promptPage.labelLabel")}>
+                      {mapping.label}
+                    </p>
+                  ) : (
+                    <input
+                      className="prompt-title-input"
+                      value={mapping.label}
+                      onChange={(event) => {
+                        updateMapping(mapping.id, (current) => ({ ...current, label: event.target.value }));
+                      }}
+                      placeholder={t("promptPage.customLabelPlaceholder")}
+                      aria-label={t("promptPage.labelLabel")}
+                    />
+                  )}
+                  <span className={`prompt-kind-badge ${mapping.id === defaultAskCommandMapping.id ? "" : "is-custom"}`}>
+                    {mapping.id === defaultAskCommandMapping.id ? t("promptPage.defaultBadge") : t("promptPage.customBadge")}
+                  </span>
                 </div>
                 <p className="prompt-card-copy">{t("promptPage.customCopy")}</p>
               </div>
 
-              <button
-                type="button"
-                className="dictionary-icon-button danger"
-                onClick={() => removeMapping(mapping.id)}
-                aria-label={t("promptPage.deleteMapping")}
-              >
-                <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M4.5 7h15" />
-                  <path d="M9.5 4h5" />
-                  <path d="M7 7l.8 11.2A2 2 0 0 0 9.8 20h4.4a2 2 0 0 0 2-1.8L17 7" />
-                  <path d="M10 10.5v5" />
-                  <path d="M14 10.5v5" />
-                </svg>
-              </button>
+              {mapping.id !== defaultAskCommandMapping.id ? (
+                <button
+                  type="button"
+                  className="dictionary-icon-button danger"
+                  onClick={() => removeMapping(mapping.id)}
+                  aria-label={t("promptPage.deleteMapping")}
+                >
+                  <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M4.5 7h15" />
+                    <path d="M9.5 4h5" />
+                    <path d="M7 7l.8 11.2A2 2 0 0 0 9.8 20h4.4a2 2 0 0 0 2-1.8L17 7" />
+                    <path d="M10 10.5v5" />
+                    <path d="M14 10.5v5" />
+                  </svg>
+                </button>
+              ) : null}
             </div>
 
             <div className="prompt-form-grid">

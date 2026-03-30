@@ -11,6 +11,7 @@ export type LlmProvider = "openrouter" | "ollama";
 export type SpeechProvider = "google";
 export type HistoryRetention = "day" | "week" | "month" | "forever";
 export type PromptMappingKind = "default" | "custom";
+export type PromptMappingMode = "dictation" | "ask_command";
 
 export interface PromptMapping {
   id: string;
@@ -18,6 +19,7 @@ export interface PromptMapping {
   hotkey: string;
   prompt: string;
   kind: PromptMappingKind;
+  mode: PromptMappingMode;
 }
 
 export interface AppSettings {
@@ -56,6 +58,7 @@ export interface HotkeyStatePayload {
   shortcut: string;
   mappingId: string;
   mappingKind: PromptMappingKind;
+  mappingMode: PromptMappingMode;
 }
 
 export interface SessionStatusPayload {

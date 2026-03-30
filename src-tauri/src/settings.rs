@@ -13,6 +13,8 @@ pub struct PromptMapping {
     pub prompt: String,
     #[serde(default = "default_mapping_kind")]
     pub kind: String,
+    #[serde(default = "default_mapping_mode")]
+    pub mode: String,
 }
 
 impl PromptMapping {
@@ -21,8 +23,9 @@ impl PromptMapping {
             id: default_mapping_id(),
             label: default_mapping_label(),
             hotkey,
-            prompt: String::new(),
+            prompt: default_dictation_prompt(),
             kind: default_mapping_kind(),
+            mode: default_mapping_mode(),
         }
     }
 }
@@ -62,7 +65,8 @@ pub struct AppSettings {
 
 impl AppSettings {
     pub fn normalized(mut self) -> Self {
-        self.prompt_mappings = normalize_prompt_mappings(&self.global_hotkey, &self.prompt_mappings);
+        self.prompt_mappings =
+            normalize_prompt_mappings(&self.global_hotkey, &self.prompt_mappings);
 
         if let Some(default_mapping) = self
             .prompt_mappings
@@ -134,7 +138,10 @@ fn default_history_retention() -> String {
 }
 
 fn default_prompt_mappings() -> Vec<PromptMapping> {
-    vec![PromptMapping::default_mapping(default_global_hotkey())]
+    vec![
+        PromptMapping::default_mapping(default_global_hotkey()),
+        default_ask_command_mapping(),
+    ]
 }
 
 fn default_mapping_id() -> String {
@@ -145,11 +152,49 @@ fn default_mapping_kind() -> String {
     "default".to_string()
 }
 
-fn default_mapping_label() -> String {
-    "Default dictation".to_string()
+fn default_mapping_mode() -> String {
+    "dictation".to_string()
 }
 
-fn normalize_prompt_mappings(global_hotkey: &str, mappings: &[PromptMapping]) -> Vec<PromptMapping> {
+fn default_mapping_label() -> String {
+    "Default Dictation".to_string()
+}
+
+fn default_dictation_prompt() -> String {
+    "Lightly clean up punctuation, spacing, filler words, and duplicate fragments. Keep the original language and intent. Return only the final text.".to_string()
+}
+
+fn default_ask_command_mapping_id() -> String {
+    "ask-command".to_string()
+}
+
+fn default_ask_command_hotkey() -> String {
+    "Ctrl+Space".to_string()
+}
+
+fn default_ask_command_prompt() -> String {
+    "Apply the spoken instruction to the provided selected text context. If context is empty, execute the instruction directly and return only the final text.".to_string()
+}
+
+fn default_ask_command_mapping() -> PromptMapping {
+    PromptMapping {
+        id: default_ask_command_mapping_id(),
+        label: default_ask_command_label(),
+        hotkey: default_ask_command_hotkey(),
+        prompt: default_ask_command_prompt(),
+        kind: "custom".to_string(),
+        mode: "ask_command".to_string(),
+    }
+}
+
+fn default_ask_command_label() -> String {
+    "Ask Command".to_string()
+}
+
+fn normalize_prompt_mappings(
+    global_hotkey: &str,
+    mappings: &[PromptMapping],
+) -> Vec<PromptMapping> {
     let default_hotkey = mappings
         .iter()
         .find(|mapping| mapping.kind == "default" && !mapping.hotkey.trim().is_empty())
@@ -165,20 +210,36 @@ fn normalize_prompt_mappings(global_hotkey: &str, mappings: &[PromptMapping]) ->
         });
 
     let mut normalized = vec![PromptMapping::default_mapping(default_hotkey)];
+    let ask_mapping_id = default_ask_command_mapping_id();
 
     if let Some(default_mapping) = mappings.iter().find(|mapping| mapping.kind == "default") {
-        normalized[0].label = if default_mapping.label.trim().is_empty() {
-            default_mapping_label()
+        normalized[0].label = default_mapping_label();
+        normalized[0].prompt = if default_mapping.prompt.trim().is_empty() {
+            default_dictation_prompt()
         } else {
-            default_mapping.label.trim().to_string()
+            default_mapping.prompt.clone()
         };
-        normalized[0].prompt = default_mapping.prompt.clone();
     }
+
+    let mut ask_mapping = default_ask_command_mapping();
+    if let Some(existing_ask_mapping) = mappings
+        .iter()
+        .find(|mapping| mapping.id.trim() == ask_mapping_id)
+    {
+        if !existing_ask_mapping.hotkey.trim().is_empty() {
+            ask_mapping.hotkey = existing_ask_mapping.hotkey.trim().to_string();
+        }
+
+        if !existing_ask_mapping.prompt.trim().is_empty() {
+            ask_mapping.prompt = existing_ask_mapping.prompt.clone();
+        }
+    }
+    normalized.push(ask_mapping);
 
     normalized.extend(
         mappings
             .iter()
-            .filter(|mapping| mapping.kind == "custom")
+            .filter(|mapping| mapping.kind == "custom" && mapping.id.trim() != ask_mapping_id)
             .enumerate()
             .map(|(index, mapping)| PromptMapping {
                 id: if mapping.id.trim().is_empty() {
@@ -194,6 +255,11 @@ fn normalize_prompt_mappings(global_hotkey: &str, mappings: &[PromptMapping]) ->
                 hotkey: mapping.hotkey.trim().to_string(),
                 prompt: mapping.prompt.clone(),
                 kind: "custom".to_string(),
+                mode: if mapping.mode.trim() == "ask_command" {
+                    "ask_command".to_string()
+                } else {
+                    "dictation".to_string()
+                },
             }),
     );
 

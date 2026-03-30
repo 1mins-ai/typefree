@@ -126,7 +126,9 @@ pub async fn process_dictation<R: Runtime>(
     mime_type: String,
     settings: AppSettings,
     mapping_kind: Option<String>,
+    mapping_mode: Option<String>,
     mapping_prompt: Option<String>,
+    selected_context: Option<String>,
 ) -> Result<DictationResult, String> {
     let settings = merge_runtime_settings(&state.settings(), settings);
     let injector = ClipboardPasteInjector::new();
@@ -134,16 +136,38 @@ pub async fn process_dictation<R: Runtime>(
         .as_deref()
         .map(str::trim)
         .filter(|prompt| !prompt.is_empty());
-    let uses_custom_prompt = matches!(mapping_kind.as_deref(), Some("custom"));
+    let resolved_mapping_mode = mapping_mode
+        .as_deref()
+        .map(str::trim)
+        .filter(|mode| !mode.is_empty())
+        .unwrap_or("dictation");
+    let is_ask_command = resolved_mapping_mode == "ask_command";
 
     set_session_status(&app, &state, "transcribing", 0.0);
     let transcript = transcribe_audio(&audio_base64, &mime_type, &settings).await?;
 
-    if uses_custom_prompt && custom_prompt.is_none() {
+    if matches!(mapping_kind.as_deref(), Some("custom")) && custom_prompt.is_none() {
         return Err("This prompt shortcut does not have a prompt yet.".to_string());
     }
 
-    if settings.cleanup_enabled || uses_custom_prompt {
+    let selected_context_for_prompt = if is_ask_command {
+        if let Some(provided) = selected_context {
+            provided
+        } else {
+            match injector.capture_selected_text() {
+                Ok(captured) => captured,
+                Err(error) => {
+                    eprintln!("Failed to capture selected text context: {error}");
+                    String::new()
+                }
+            }
+        }
+    } else {
+        String::new()
+    };
+
+    let should_cleanup = settings.cleanup_enabled || custom_prompt.is_some() || is_ask_command;
+    if should_cleanup {
         set_session_status(&app, &state, "cleaning", 0.0);
     } else {
         set_session_status(&app, &state, "inserting", 0.0);
@@ -152,7 +176,18 @@ pub async fn process_dictation<R: Runtime>(
         &transcript,
         &settings,
         custom_prompt,
-        uses_custom_prompt,
+        should_cleanup,
+        is_ask_command,
+        if is_ask_command {
+            let trimmed = selected_context_for_prompt.trim();
+            if trimmed.is_empty() {
+                None
+            } else {
+                Some(trimmed)
+            }
+        } else {
+            None
+        },
     )
     .await?;
 
@@ -289,27 +324,27 @@ pub fn register_or_replace_shortcuts<R: Runtime>(
 
             let mapping_id = mapping.id.clone();
             let mapping_kind = mapping.kind.clone();
+            let mapping_mode = mapping.mode.clone();
 
             app.global_shortcut()
-            .on_shortcut(shortcut, move |handle, shortcut, event| {
-                let state = match event.state() {
-                    ShortcutState::Pressed => "pressed",
-                    ShortcutState::Released => "released",
-                };
+                .on_shortcut(shortcut, move |handle, shortcut, event| {
+                    let state = match event.state() {
+                        ShortcutState::Pressed => "pressed",
+                        ShortcutState::Released => "released",
+                    };
 
-                let _ = handle.emit(
-                    "dictation-hotkey-state",
-                    serde_json::json!({
-                        "state": state,
-                        "shortcut": shortcut.to_string(),
-                        "mappingId": mapping_id,
-                        "mappingKind": mapping_kind
-                    }),
-                );
-            })
-            .map_err(|error| {
-                format!("Failed to register global hotkey '{hotkey}': {error}")
-            })?;
+                    let _ = handle.emit(
+                        "dictation-hotkey-state",
+                        serde_json::json!({
+                            "state": state,
+                            "shortcut": shortcut.to_string(),
+                            "mappingId": mapping_id,
+                            "mappingKind": mapping_kind,
+                            "mappingMode": mapping_mode
+                        }),
+                    );
+                })
+                .map_err(|error| format!("Failed to register global hotkey '{hotkey}': {error}"))?;
         }
     }
 
